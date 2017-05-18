@@ -41,6 +41,13 @@ public class Database {
         return statement.executeQuery(query);
     }
 
+    /**
+     *
+     * @param username - String
+     * @param pass - String
+     * @param age - pass
+     * @return Returns true if user is successfully registered in database, false otherwise
+     */
     public boolean createUser(String username,String pass,int age){
         try {
             String sql = "insert into users(username,password,userAge)" + "values(?,?,?)";

@@ -44,6 +44,7 @@ public class UserManager implements IUserAuthenticator,Serializable {
      * Increments userId and passes it to the created user.
      */
     public User createUser(String name,String password, int age){
+        database.createUser(name,password,age);
         return new User(name,password,age);
     }
 
@@ -132,9 +133,9 @@ public class UserManager implements IUserAuthenticator,Serializable {
     @Override
     public boolean validateRegister(String username, String password) throws UsedUsernameException{
 
-       if (database.availableToRegister(username,password)){
-           return true;
-       }
+        if(isPasswordGood(password)) {
+            return database.availableToRegister(username, password);
+        }
        else {
            throw new UsedUsernameException();
        }
