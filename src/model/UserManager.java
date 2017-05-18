@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import database.Database;
 import model.Vehicle.Vehicle;
 import model.authentication.IUserAuthenticator;
 import model.authentication.UsedUsernameException;
@@ -26,22 +28,23 @@ public class UserManager implements IUserAuthenticator,Serializable {
     public static UserManager getInstance() {
         return manager;
     };
-    private TreeSet<User> registeredUsers;
-    private static int userId =0;
+    private ArrayList<User> registeredUsers;
     private User loggedUser;
+
+    private Database database = null;
 
     private UserManager() {
 
-        registeredUsers = new TreeSet<User>();
+        registeredUsers = new ArrayList<>();
         loggedUser = null;
+        database = Database.getInstance();
     }
 
     /**
      * Increments userId and passes it to the created user.
      */
     public User createUser(String name,String password, int age){
-        userId++;
-        return new User(name,password,age,userId);
+        return new User(name,password,age);
     }
 
     private boolean isPasswordGood(String password){
@@ -89,7 +92,6 @@ public class UserManager implements IUserAuthenticator,Serializable {
     public void updateFromFile(UserManager x){
         this.loggedUser = x.loggedUser;
         this.registeredUsers = x.registeredUsers;
-        userId = x.registeredUsers.last().getId();
     }
 
     /**
@@ -129,36 +131,41 @@ public class UserManager implements IUserAuthenticator,Serializable {
      */
     @Override
     public boolean validateRegister(String username, String password) throws UsedUsernameException{
-        if(registeredUsers.isEmpty()){
-            return (!username.isEmpty() && isPasswordGood(password));
-        }
-        if(!registeredUsers.isEmpty()) {
-            if(!username.isEmpty() && isPasswordGood(password)){
-                for (User x : registeredUsers) {
-                    if (x.name.equals(username)) {
-                        throw new UsedUsernameException();
-                    }
-                }
-                return true;
-            }
-            else return false;
-        }
-        return false;
+
+       if (database.availableToRegister(username,password)){
+           return true;
+       }
+       else {
+           throw new UsedUsernameException();
+       }
+//        if(registeredUsers.isEmpty()){
+//            return (!username.isEmpty() && isPasswordGood(password));
+//        }
+//        if(!registeredUsers.isEmpty()) {
+//            if(!username.isEmpty() && isPasswordGood(password)){
+//                for (User x : registeredUsers) {
+//                    if (x.name.equals(username)) {
+//                        throw new UsedUsernameException();
+//                    }
+//                }
+//                return true;
+//            }
+//            else return false;
+//        }
+//        return false;
     }
 
-    private class User implements Comparable<User>,Serializable {
+    private class User {
         private String name;
         private String password;
         private int age;
-        private int id;
         private TreeSet<Vehicle> ownedVehicles;
 
-        private User(String name, String password, int age, int id) {
+        private User(String name, String password, int age) {
             this.name = name;
             this.age = age;
             this.password = password;
             ownedVehicles = new TreeSet<>();
-            this.id = id;
         }
 //        private User(User x){
 //            this.name = x.name;
@@ -167,11 +174,6 @@ public class UserManager implements IUserAuthenticator,Serializable {
 //            ownedVehicles = x.ownedVehicles;
 //            this.id = x.id;
 //        }
-
-
-        public int getId() {
-            return id;
-        }
 
          void addVehicle(Vehicle x) {
             if (x != null) {
@@ -197,11 +199,5 @@ public class UserManager implements IUserAuthenticator,Serializable {
             }
         }
 
-        @Override
-        public int compareTo(User user) {
-            if(this.id < user.id) return -1;
-            if(this.id == user.id) return 0;
-            return 1;
-        }
     }
 }

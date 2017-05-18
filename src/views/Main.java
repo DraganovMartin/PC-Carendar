@@ -1,13 +1,16 @@
-package sample;
+package views;
 
+import database.Database;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import javafx.stage.Stage;
+import model.UserManager;
+import model.authentication.UsedUsernameException;
 
 public class Main extends Application {
+    private static UserManager manager = null;
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -19,6 +22,14 @@ public class Main extends Application {
 
 
     public static void main(String[] args) {
+        manager = UserManager.getInstance();
+        try {
+            manager.validateRegister("Marto","Marto95");
+        } catch (UsedUsernameException e) {
+            e.printStackTrace();
+        }
         launch(args);
     }
+
+
 }
