@@ -1,5 +1,7 @@
 package database;
 
+import model.UserManager;
+
 import java.sql.*;
 
 /**
@@ -71,6 +73,27 @@ public class Database {
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    public ResultSet logInUser(String username, String pass){
+        String sql = "select uesrID,userAge from users where username = ? AND password = ?";
+
+        try {
+            preparedStatement = connect.prepareStatement(sql);
+            preparedStatement.setString(1,username);
+            preparedStatement.setString(2,pass);
+            resultSet = preparedStatement.executeQuery();
+
+            if(!resultSet.first()){
+                return null;
+            }
+
+            return resultSet;
+
+        }catch (SQLException e){
+            e.printStackTrace();
+            return null;
         }
     }
 }
