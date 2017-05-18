@@ -83,8 +83,14 @@ public class Database {
         }
     }
 
-    public ResultSet logInUser(String username, String pass){
-        String sql = "select uesrID,userAge from users where username = ? AND password = ?";
+    /**
+     *
+     * @param username
+     * @param pass
+     * @return the age of the logged user, 0 if the value in the db is NULL and -1 if the login was unsuccessful
+     */
+    public int logInUser(String username, String pass){
+        String sql = "select userAge from users where username = ? AND password = ?";
 
         try {
             preparedStatement = connect.prepareStatement(sql);
@@ -93,14 +99,14 @@ public class Database {
             resultSet = preparedStatement.executeQuery();
 
             if(!resultSet.first()){
-                return null;
+                return -1;
             }
 
-            return resultSet;
+            return resultSet.getInt(4);
 
         }catch (SQLException e){
             e.printStackTrace();
-            return null;
+            return -1;
         }
     }
 }
