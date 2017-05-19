@@ -7,6 +7,7 @@ package model;
 
 import java.io.File;
 import java.io.Serializable;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
@@ -46,6 +47,22 @@ public class UserManager implements IUserAuthenticator,Serializable {
     public User createUser(String name,String password, int age){
         database.createUser(name,password,age);
         return new User(name,password,age);
+    }
+
+    /**
+     * Sets the loggedUser with the current user
+     * @param username
+     * @param pass
+     * @return true if the user was logged in false otherwise
+     */
+    public boolean loginUser(String username, String pass){
+        int userAge = database.logInUser(username,pass);
+        if(userAge == -1){
+            return false;
+        }
+
+        loggedUser = new User(username,pass,userAge);
+        return true;
     }
 
     private boolean isPasswordGood(String password){
