@@ -3,6 +3,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
@@ -14,5 +15,11 @@
       <Label layoutX="105.0" layoutY="102.0" text="Username" />
       <Label layoutX="105.0" layoutY="165.0" text="Password" />
       <Button fx:id="registerBtn" layoutX="378.0" layoutY="246.0" mnemonicParsing="false" onAction="#registerAction" prefHeight="32.0" prefWidth="77.0" text="Register" />
+      <Label fx:id="messageLbl" layoutX="209.0" layoutY="200.0" textFill="#eb1414" />
+      <AnchorPane id="hello" fx:id="progressPane" layoutX="-4.0" layoutY="1.0" prefHeight="400.0" prefWidth="600.0" visible="false">
+         <children>
+            <ProgressBar fx:id="progressBar" layoutX="200.0" layoutY="190.0" prefWidth="200.0" progress="0.0" />
+         </children>
+      </AnchorPane>
    </children>
 </AnchorPane>
