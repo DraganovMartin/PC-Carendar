@@ -7,7 +7,6 @@ package model;
 
 import java.io.File;
 import java.io.Serializable;
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
@@ -18,6 +17,7 @@ import database.Database;
 import model.Vehicle.Vehicle;
 import model.authentication.IUserAuthenticator;
 import model.authentication.UsedUsernameException;
+import model.authentication.WeakPassException;
 
 /**
  * Singleton class UserManager for creating, registering and managing users.
@@ -42,7 +42,7 @@ public class UserManager implements IUserAuthenticator,Serializable {
     }
 
     /**
-     * Increments userId and passes it to the created user.
+     * Creates user in database and returns User object.
      */
     public User createUser(String name,String password, int age){
         database.createUser(name,password,age);
@@ -145,32 +145,18 @@ public class UserManager implements IUserAuthenticator,Serializable {
      *
      * @param username - String
      * @param password - String
-     * @return true if mail and password are good, false otherwise
+     * @return true if username and password are good, false otherwise
      */
     @Override
-    public boolean validateRegister(String username, String password) throws UsedUsernameException{
+    public boolean validateRegister(String username, String password) throws WeakPassException{
 
         if(isPasswordGood(password)) {
             return database.availableToRegister(username, password);
         }
        else {
-           throw new UsedUsernameException();
+           throw new WeakPassException();
        }
-//        if(registeredUsers.isEmpty()){
-//            return (!username.isEmpty() && isPasswordGood(password));
-//        }
-//        if(!registeredUsers.isEmpty()) {
-//            if(!username.isEmpty() && isPasswordGood(password)){
-//                for (User x : registeredUsers) {
-//                    if (x.name.equals(username)) {
-//                        throw new UsedUsernameException();
-//                    }
-//                }
-//                return true;
-//            }
-//            else return false;
-//        }
-//        return false;
+
     }
 
     private class User {
