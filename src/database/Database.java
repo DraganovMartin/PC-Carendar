@@ -102,7 +102,7 @@ public class Database {
                 return -1;
             }
 
-            return resultSet.getInt(4);
+            return resultSet.getInt(1);
 
         }catch (SQLException e){
             e.printStackTrace();

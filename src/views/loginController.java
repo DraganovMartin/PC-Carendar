@@ -3,18 +3,24 @@ package views;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 import javafx.scene.layout.AnchorPane;
 import model.UserManager;
+
+import java.io.IOException;
 
 /**
  * Created by dimcho on 18.05.17.
  */
 public class loginController {
     private final UserManager manager = UserManager.getInstance();
+    private final ViewWrapper viewWrapper = ViewWrapper.getInstance();
 
     @FXML
     private TextField usernameText;
@@ -26,7 +32,12 @@ public class loginController {
     private AnchorPane progressPane;
     @FXML
     private ProgressBar progressBar;
+    @FXML
+    private Button registerBtn;
+    @FXML
+    private Button loginBtn;
 
+    private Alert alert = new Alert(Alert.AlertType.INFORMATION);
     /**
      * If the login is successful the method runs a
      * background task to retrieve the logged user's vehicles
@@ -50,10 +61,19 @@ public class loginController {
                new Thread(loaderTask).start();
 
            }else{
-               messageLbl.setText("No such username or password!");
+               alert.setTitle("Login error !!!");
+               alert.setHeaderText("Username or password is wrong !");
+               String s ="Please enter valid username and password";
+               alert.setContentText(s);
+               alert.show();
+
            }
         }else{
-            messageLbl.setText("Both fields are required!");
+            alert.setTitle("Login error !!!");
+            alert.setHeaderText("Empty username and/or password !");
+            String s ="Please enter a username and password or register";
+            alert.setContentText(s);
+            alert.show();
         }
     }
 
@@ -61,14 +81,34 @@ public class loginController {
 
         @Override
         protected Void call() throws Exception {
-
+            // TODO implement call
             return null;
         }
 
         @Override
         protected void succeeded() {
             super.succeeded();
-            // TODO redirect to garage view
+            try {
+                viewWrapper.setStage((Stage)loginBtn.getScene().getWindow());
+                viewWrapper.setRoot("garage.fxml");
+                viewWrapper.setSceneRoot(viewWrapper.getRoot());
+                viewWrapper.setStageScene(viewWrapper.getScene());
+                viewWrapper.getStage().show();
+           } catch (IOException e) {
+                e.printStackTrace();
+           }
+        }
+    }
+
+    public void registerAction(ActionEvent actionEvent) {
+        try {
+            viewWrapper.setStage((Stage)registerBtn.getScene().getWindow());
+            viewWrapper.setRoot("register.fxml");
+            viewWrapper.setSceneRoot(viewWrapper.getRoot());
+            viewWrapper.setStageScene(viewWrapper.getScene());
+            viewWrapper.getStage().show();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
