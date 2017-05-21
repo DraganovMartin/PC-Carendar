@@ -84,7 +84,7 @@ public class Database {
     }
 
     /**
-     *
+     * Checks user credentials from db
      * @param username
      * @param pass
      * @return the age of the logged user, 0 if the value in the db is NULL and -1 if the login was unsuccessful
@@ -107,6 +107,25 @@ public class Database {
         }catch (SQLException e){
             e.printStackTrace();
             return -1;
+        }
+    }
+
+    /**
+     * Gets the user's vehicles from the database
+     *
+     * @param username the unique id that identifies which vehicles are owned by this user
+     * @return the user's vehicles
+     */
+    public ResultSet getLoggedUserVehicles(String username){
+        String sql = "select * from vehicles where ownerID = ?";
+        try {
+            preparedStatement = connect.prepareStatement(sql);
+            preparedStatement.setString(1,username);
+            resultSet = preparedStatement.executeQuery();
+
+            return resultSet;
+        } catch (SQLException e) {
+            return null;
         }
     }
 }
