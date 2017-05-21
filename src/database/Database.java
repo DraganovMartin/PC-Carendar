@@ -117,7 +117,11 @@ public class Database {
      * @return the user's vehicles
      */
     public ResultSet getLoggedUserVehicles(String username){
-        String sql = "select * from vehicles where ownerID = ?";
+        String sql = "select brand, model,vehicles.type,registration,ownerID, productionYear," +
+                " taxes.type, dateFrom, dateTo, price" +
+                " from users Inner Join vehicles On (users.username = vehicles.ownerID)" +
+                " Left Join taxes On (vehicles.idVehicles=taxes.taxes_vehicleID)" +
+                " Where username=?";
         try {
             preparedStatement = connect.prepareStatement(sql);
             preparedStatement.setString(1,username);
