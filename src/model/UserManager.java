@@ -1,12 +1,8 @@
 package model;
 
-//import android.content.Context;
-//import android.content.Intent;
-//
-//import com.carcalendar.dmdev.carcalendar.services.StorageManager;
-
 import java.io.File;
 import java.io.Serializable;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
@@ -16,7 +12,6 @@ import java.util.regex.Pattern;
 import database.Database;
 import model.Vehicle.Vehicle;
 import model.authentication.IUserAuthenticator;
-import model.authentication.UsedUsernameException;
 import model.authentication.WeakPassException;
 
 /**
@@ -65,6 +60,29 @@ public class UserManager implements IUserAuthenticator,Serializable {
         return true;
     }
 
+    /**
+     * @return true if logged user is found and set adequate. False otherwise.
+     */
+    public boolean setLoggedUserFromInitialLoading(){
+        String name,pass;
+        int age;
+        try {
+            String[] data = database.findLoggedUser();
+            if (data != null) {
+                name = data[0];
+                pass = data[1];
+                age = Integer.valueOf(data[2]);
+                loggedUser = new User(name, pass, age);
+                return true;
+            }
+            else return false;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+    }
+
     private boolean isPasswordGood(String password){
         final Pattern passPattern = Pattern.compile( "((?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{6,20})");
         Matcher matcher = passPattern.matcher(password);
@@ -103,25 +121,15 @@ public class UserManager implements IUserAuthenticator,Serializable {
         loggedUser = null;
     }
 
-    /**
-     * IF YOU UPDATE USERMANAGER FROM FILE YOU MUST USE ONLY THIS METHOD AS A SOLUTION !!!
-     * @param x - UserManager Singleton
-     */
-    public void updateFromFile(UserManager x){
-        this.loggedUser = x.loggedUser;
-        this.registeredUsers = x.registeredUsers;
-    }
-
-    /**
-     *  ANDROID SPECIFIC !!!
-     *  Serializing the UserManager object to internal storage  with openFileOutput()
-     * @param x - UserManager
-     */
-//    public static void saveDataUserManager(Context context, final UserManager x){
-//        Intent intent = new Intent(context,StorageManager.class);
-//        intent.putExtra(SAVE_USER_MANAGER,x);
-//        context.startService(intent);
+//    /**
+//     * IF YOU UPDATE USERMANAGER FROM FILE YOU MUST USE ONLY THIS METHOD AS A SOLUTION !!!
+//     * @param x - UserManager Singleton
+//     */
+//    public void updateFromFile(UserManager x){
+//        this.loggedUser = x.loggedUser;
+//        this.registeredUsers = x.registeredUsers;
 //    }
+
 
     /**
      *

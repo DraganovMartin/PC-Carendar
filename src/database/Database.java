@@ -90,10 +90,10 @@ public class Database {
      * @return the age of the logged user, 0 if the value in the db is NULL and -1 if the login was unsuccessful
      */
     public int logInUser(String username, String pass){
-        String sql = "select userAge from users where username = ? AND password = ?";
+        String sql = "select username,userAge,isLogged from users where username = ? AND password = ?";
 
         try {
-            preparedStatement = connect.prepareStatement(sql);
+            preparedStatement = connect.prepareStatement(sql,ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);
             preparedStatement.setString(1,username);
             preparedStatement.setString(2,pass);
             resultSet = preparedStatement.executeQuery();
@@ -101,8 +101,10 @@ public class Database {
             if(!resultSet.first()){
                 return -1;
             }
+            resultSet.updateInt(3,1);
+            resultSet.updateRow();
 
-            return resultSet.getInt(1);
+            return resultSet.getInt(2);
 
         }catch (SQLException e){
             e.printStackTrace();
@@ -131,5 +133,17 @@ public class Database {
         } catch (SQLException e) {
             return null;
         }
+    }
+
+    /**
+     * Finds if there is logged user.
+     */
+    public String[] findLoggedUser() throws SQLException {
+        String sql = "select username,password,userAge from users where isLogged = 1";
+        resultSet = statement.executeQuery(sql);
+        if (resultSet.first()) {
+            return new String[]{resultSet.getString(1),resultSet.getString(2),resultSet.getString(3)};
+        }
+        else return null;
     }
 }

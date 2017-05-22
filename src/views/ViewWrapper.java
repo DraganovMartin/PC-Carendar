@@ -3,6 +3,7 @@ package views;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -14,6 +15,8 @@ public class ViewWrapper {
     private Parent root;
     private Stage stage;
     private Scene scene;
+    private static final double SCREEN_WIDTH = Screen.getPrimary().getVisualBounds().getWidth();
+    private static final double SCREEN_HEIGHT = Screen.getPrimary().getVisualBounds().getWidth();
 
     private static ViewWrapper viewWrapper = new ViewWrapper();
 
@@ -44,7 +47,7 @@ public class ViewWrapper {
     }
 
     public void setSceneRoot(Parent root) {
-        this.scene = new Scene(root);
+        this.scene = new Scene(root,SCREEN_WIDTH,SCREEN_HEIGHT);
     }
 
     public void setStageScene(Scene scene){

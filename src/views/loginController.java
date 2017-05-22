@@ -21,6 +21,7 @@ import java.io.IOException;
 public class loginController {
     private final UserManager manager = UserManager.getInstance();
     private final ViewWrapper viewWrapper = ViewWrapper.getInstance();
+    private final LoaderTask loaderTask = new LoaderTask();
 
     @FXML
     private TextField usernameText;
@@ -29,13 +30,25 @@ public class loginController {
     @FXML
     private Label messageLbl;
     @FXML
-    private AnchorPane progressPane;
-    @FXML
-    private ProgressBar progressBar;
+    private AnchorPane loginPane;
     @FXML
     private Button registerBtn;
     @FXML
     private Button loginBtn;
+
+
+    @FXML
+    public void initialize() {
+        // TODO : what the fuck is the problem with constructors !!!
+        if(manager.setLoggedUserFromInitialLoading()){
+            new Thread(loaderTask).start();
+        }else{
+            // Show progress pane
+            loginPane.setStyle("-fx-background-color: f4f4f4;");
+            loginPane.setVisible(true);
+        }
+    }
+
 
     private Alert alert = new Alert(Alert.AlertType.INFORMATION);
     /**
@@ -49,14 +62,6 @@ public class loginController {
 
         if(!username.isEmpty() && !pass.isEmpty()){
            if(manager.loginUser(username,pass)){
-               // Bind progressBar to task progress
-               LoaderTask loaderTask = new LoaderTask();
-               progressBar.progressProperty().bind(loaderTask.progressProperty());
-
-               // Show progress pane
-               progressPane.setStyle("-fx-background-color: f4f4f4;");
-               progressPane.setVisible(true);
-
                // Run task
                new Thread(loaderTask).start();
 
@@ -80,8 +85,15 @@ public class loginController {
     private class LoaderTask extends Task<Void> {
 
         @Override
+        protected void scheduled() {
+            super.scheduled();
+            loginPane.setVisible(false);
+        }
+
+        @Override
         protected Void call() throws Exception {
             // TODO implement call
+            
             return null;
         }
 
