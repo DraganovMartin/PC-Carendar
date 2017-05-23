@@ -5,11 +5,11 @@
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#closeEverythingOpen" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="views.garageController">
+<AnchorPane fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#closeEverythingOpen" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="views.garageController">
    <children>
-      <Label layoutX="38.0" layoutY="29.0" text="Hello" />
+      <Label layoutX="38.0" layoutY="29.0" text="Hello" AnchorPane.bottomAnchor="354.0" AnchorPane.leftAnchor="38.0" AnchorPane.rightAnchor="534.0" AnchorPane.topAnchor="29.0" />
       <Label fx:id="usernameLabel" layoutX="78.0" layoutY="29.0" />
-      <Button fx:id="addVehicleBtn" layoutX="497.0" layoutY="311.0" mnemonicParsing="false" onAction="#addVehicle" text="Add Vehicle" />
+      <Button fx:id="addVehicleBtn" layoutX="497.0" layoutY="311.0" mnemonicParsing="false" onAction="#addVehicle" text="Add Vehicle" AnchorPane.bottomAnchor="64.0" AnchorPane.leftAnchor="497.0" AnchorPane.rightAnchor="23.0" AnchorPane.topAnchor="311.0" />
       <ListView fx:id="vehicleListView" layoutX="480.0" layoutY="248.0" onMouseClicked="#selectVehicle" prefHeight="63.0" prefWidth="113.0" visible="false" />
    </children>
 </AnchorPane>

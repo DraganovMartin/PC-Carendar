@@ -1,23 +1,123 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Rectangle2D?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="458.0" prefWidth="637.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="views.addCarController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="views.addCarController">
    <children>
-      <ImageView fitHeight="132.0" fitWidth="139.0" layoutX="253.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
+      <Label layoutX="534.0" layoutY="163.0" text="Registration number :" AnchorPane.leftAnchor="534.0" AnchorPane.topAnchor="163.0" />
+      <TextField fx:id="regNumTF" layoutX="666.0" layoutY="159.0" promptText="СА8888СА" AnchorPane.leftAnchor="666.0" AnchorPane.topAnchor="159.0" />
+      <Label layoutX="611.0" layoutY="136.0" text="Choose image for your car." AnchorPane.bottomAnchor="647.0" AnchorPane.leftAnchor="611.0" AnchorPane.topAnchor="136.0" />
+      <ImageView fx:id="carImage" fitHeight="139.0" fitWidth="115.0" layoutX="625.0" layoutY="21.0" nodeOrientation="INHERIT" onMouseClicked="#changeImage" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="664.0" AnchorPane.leftAnchor="625.0" AnchorPane.topAnchor="21.0">
          <image>
-            <Image url="@../../Images/carDefaultIcon.png" />
+            <Image url="@../resources/carDefaultIcon.png" />
          </image>
+         <viewport>
+            <Rectangle2D />
+         </viewport>
       </ImageView>
-      <Label layoutX="247.0" layoutY="146.0" text="Choose image for your car." />
-      <ScrollPane layoutX="84.0" layoutY="163.0" prefHeight="200.0" prefWidth="470.0">
-        <content>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
-        </content>
-      </ScrollPane>
+      <Button fx:id="cancelBtn" layoutX="573.0" layoutY="671.0" mnemonicParsing="false" onAction="#cancel" text="Cancel" AnchorPane.bottomAnchor="104.0" AnchorPane.rightAnchor="655.0" AnchorPane.topAnchor="671.0" />
+      <Button fx:id="saveBtn" alignment="CENTER_RIGHT" layoutX="815.0" layoutY="671.0" mnemonicParsing="false" onAction="#saveCar" text="Save" AnchorPane.bottomAnchor="104.0" AnchorPane.leftAnchor="815.0" AnchorPane.topAnchor="671.0" />
+       <ScrollPane fitToHeight="true" fitToWidth="true" layoutX="14.0" layoutY="245.0" prefHeight="545.0" prefWidth="1260.0" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="200.0">
+           <content>
+               <AnchorPane prefHeight="543.0" prefWidth="1258.0">
+                   <children>
+                       <Label layoutX="289.0" layoutY="53.0" prefHeight="17.0" prefWidth="53.0" text="Brand :" wrapText="true" AnchorPane.rightAnchor="916.0" AnchorPane.topAnchor="53.0">
+                           <font>
+                               <Font size="14.0" />
+                           </font>
+                       </Label>
+                       <TextField fx:id="brandTF" layoutX="386.0" layoutY="54.0" AnchorPane.rightAnchor="723.0" AnchorPane.topAnchor="54.0" />
+                       <Label layoutX="856.0" layoutY="53.0" prefHeight="17.0" prefWidth="53.0" text="Model :" AnchorPane.rightAnchor="349.0" AnchorPane.topAnchor="53.0">
+                           <font>
+                               <Font size="14.0" />
+                           </font>
+                       </Label>
+                       <TextField fx:id="modelTF" layoutX="934.0" layoutY="51.0" AnchorPane.rightAnchor="175.0" AnchorPane.topAnchor="51.0" />
+                       <Label layoutX="288.0" layoutY="165.0" prefHeight="17.0" prefWidth="53.0" text="Type :" wrapText="true" AnchorPane.rightAnchor="917.0">
+                           <font>
+                               <Font size="14.0" />
+                           </font>
+                       </Label>
+                       <ComboBox fx:id="typeCombo" layoutX="386.0" layoutY="163.0" prefWidth="150.0" promptText="Sedan" AnchorPane.rightAnchor="722.0" />
+                       <ComboBox fx:id="engineCombo" layoutX="922.0" layoutY="160.0" prefWidth="150.0" promptText="Gasoline" AnchorPane.rightAnchor="173.0" />
+                       <Label layoutX="856.0" layoutY="164.0" prefHeight="17.0" prefWidth="53.0" text="Engine :" AnchorPane.rightAnchor="349.0">
+                           <font>
+                               <Font size="14.0" />
+                           </font>
+                       </Label>
+                       <Label layoutX="287.0" layoutY="272.0" prefHeight="17.0" prefWidth="53.0" text="Year :" wrapText="true" AnchorPane.rightAnchor="918.0">
+                           <font>
+                               <Font size="14.0" />
+                           </font>
+                       </Label>
+                       <TextField fx:id="yearTF" layoutX="386.0" layoutY="270.0" promptText="2017" AnchorPane.rightAnchor="723.0" />
+                       <Label layoutX="857.0" layoutY="272.0" prefHeight="17.0" prefWidth="53.0" text="Range :" AnchorPane.rightAnchor="348.0">
+                           <font>
+                               <Font size="14.0" />
+                           </font>
+                       </Label>
+                       <TextField fx:id="rangeTF" layoutX="934.0" layoutY="270.0" promptText="127000" AnchorPane.rightAnchor="175.0" />
+                       <Label layoutX="286.0" layoutY="355.0" prefHeight="52.0" prefWidth="53.0" text="Vignette type " wrapText="true" AnchorPane.rightAnchor="919.0">
+                           <font>
+                               <Font size="14.0" />
+                           </font>
+                       </Label>
+                       <ComboBox fx:id="vigTypeCombo" layoutX="386.0" layoutY="369.0" prefWidth="150.0" promptText="Week" AnchorPane.rightAnchor="722.0" />
+                       <Label layoutX="853.0" layoutY="361.0" prefHeight="42.0" prefWidth="62.0" text="Vignette start date" wrapText="true" AnchorPane.rightAnchor="343.0">
+                           <font>
+                               <Font size="14.0" />
+                           </font>
+                       </Label>
+                       <DatePicker fx:id="vigStartDP" layoutX="917.0" layoutY="370.0" promptText="choose date" AnchorPane.rightAnchor="167.0" />
+                       <Label layoutX="287.0" layoutY="460.0" prefHeight="53.0" prefWidth="53.0" text="Next oil change " wrapText="true" AnchorPane.rightAnchor="918.0">
+                           <font>
+                               <Font size="14.0" />
+                           </font>
+                       </Label>
+                       <TextField fx:id="oilChangeTF" layoutX="387.0" layoutY="474.0" promptText="228000" AnchorPane.rightAnchor="722.0" />
+                       <Label layoutX="858.0" layoutY="465.0" prefHeight="45.0" prefWidth="53.0" text="Tax amount" wrapText="true" AnchorPane.rightAnchor="347.0">
+                           <font>
+                               <Font size="14.0" />
+                           </font>
+                       </Label>
+                       <TextField fx:id="taxTF" layoutX="935.0" layoutY="475.0" AnchorPane.rightAnchor="161.0" />
+                       <Label layoutX="281.0" layoutY="574.0" prefHeight="68.0" prefWidth="62.0" text="Next tax payment" wrapText="true" AnchorPane.rightAnchor="915.0">
+                           <font>
+                               <Font size="14.0" />
+                           </font>
+                       </Label>
+                       <DatePicker fx:id="taxPayDP" layoutX="374.0" layoutY="596.0" promptText="choose text" AnchorPane.rightAnchor="710.0" />
+                       <Label layoutX="852.0" layoutY="576.0" prefHeight="60.0" prefWidth="66.0" text="Insurance amount " wrapText="true" AnchorPane.rightAnchor="340.0">
+                           <font>
+                               <Font size="14.0" />
+                           </font>
+                       </Label>
+                       <TextField fx:id="insuranceTF" layoutX="935.0" layoutY="594.0" promptText="125.25" AnchorPane.rightAnchor="174.0" />
+                       <Label layoutX="282.0" layoutY="679.0" prefHeight="76.0" prefWidth="69.0" text="Insurance payment count" wrapText="true" AnchorPane.rightAnchor="907.0">
+                           <font>
+                               <Font size="14.0" />
+                           </font>
+                       </Label>
+                       <ComboBox fx:id="insurancePayCountDP" layoutX="387.0" layoutY="704.0" prefWidth="150.0" promptText="Four" AnchorPane.rightAnchor="721.0" />
+                       <Label layoutX="854.0" layoutY="683.0" prefHeight="65.0" prefWidth="62.0" text="Insurance date start" wrapText="true" AnchorPane.rightAnchor="342.0">
+                           <font>
+                               <Font size="14.0" />
+                           </font>
+                       </Label>
+                       <DatePicker fx:id="insDateStartDP" layoutX="923.0" layoutY="703.0" promptText="choose date" AnchorPane.rightAnchor="161.0" />
+                   </children>
+               </AnchorPane>
+           </content>
+       </ScrollPane>
    </children>
 </AnchorPane>
