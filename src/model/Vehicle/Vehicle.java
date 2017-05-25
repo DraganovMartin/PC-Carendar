@@ -104,6 +104,10 @@ public abstract class Vehicle implements Serializable,Comparable<Vehicle> {
         return insurance;
     }
 
+    public void setInsurance(Insurance insurance) {
+        this.insurance = insurance;
+    }
+
     /**
      *
      * @return Tax object

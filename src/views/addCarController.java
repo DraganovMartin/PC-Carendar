@@ -13,10 +13,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import model.Stickers.AnnualVignette;
-import model.Stickers.IVignette;
-import model.Stickers.MonthVignette;
-import model.Stickers.WeekVignette;
+import model.Stickers.*;
 import model.UserManager;
 import model.Vehicle.Car;
 
@@ -84,7 +81,7 @@ public class addCarController {
     private TextField insuranceTF;
 
     @FXML
-    private ComboBox<Integer> insurancePayCountDP;
+    private ComboBox<String> insurancePayCountDP;
 
     @FXML
     private DatePicker insDateStartDP;
@@ -118,6 +115,51 @@ public class addCarController {
                     vignette = null;
         }
         return vignette;
+    }
+
+    private Insurance setAndGetInsurance(){
+        Insurance insurance = new Insurance();
+        if (insuranceTF.getText() == null){
+            showDialogError("Please set insurance tax !");
+            insuranceTF.requestFocus();
+            return null;
+        }
+
+        if (insurancePayCountDP.getValue() == null){
+            showDialogError("Please choose insurance payment count !");
+            insurancePayCountDP.requestFocus();
+            return null;
+        }
+
+        if (insDateStartDP.getValue() == null){
+            showDialogError("Please choose insurance start day !");
+            insDateStartDP.requestFocus();
+            return null;
+        }
+
+        insurance.setPrice(Double.parseDouble(insuranceTF.getText()));
+
+        switch (insurancePayCountDP.getValue()){
+            case "ONE":
+                insurance.setTypeCount(Insurance.Payments.ONE);
+                break;
+            case "TWO":
+                insurance.setTypeCount(Insurance.Payments.TWO);
+                break;
+            case "THREE":
+                insurance.setTypeCount(Insurance.Payments.THREE);
+                break;
+            case "FOUR":
+                insurance.setTypeCount(Insurance.Payments.FOUR);
+                break;
+
+        }
+        LocalDate date = insDateStartDP.getValue();
+        insurance.setStartDate(date.getYear(),date.getMonthValue()-1,date.getDayOfMonth());
+
+
+
+        return insurance;
     }
 
     @FXML
@@ -217,25 +259,9 @@ public class addCarController {
             vehicle.getTax().setEndDate(date.getYear(),date.getMonthValue()-1,date.getDayOfMonth());
         }
 
-//        if (insuranceTF.getText() == null){
-//            showDialogError("Please enter insurance amount (whole amount - Annual).");
-//            insuranceTF.requestFocus();
-//            return;
-//        }
-//        else {
-//            vehicle.getInsurance().setPrice(Double.parseDouble(insuranceTF.getText()));
-//        }
-//
-//        if (insurancePayCountDP.getValue() == null){
-//            showDialogError("Please choose insurance payment portions !");
-//            insurancePayCountDP.requestFocus();
-//            return;
-//        }
-//        else {
-//            vehicle.getInsurance().
-//        }
-        // TODO : Whole commented code above exported to a method, same as setAndGetVignette() Method
-        //userManager.addVehicle();
+        vehicle.setInsurance(setAndGetInsurance());
+        userManager.addVehicle(vehicle);
+        cancelBtn.fire();
     }
 
     @FXML

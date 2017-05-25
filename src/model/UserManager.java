@@ -95,6 +95,7 @@ public class UserManager implements IUserAuthenticator,Serializable {
 
     public void addVehicle(Vehicle x){
         loggedUser.addVehicle(x);
+        database.addVehicle(getLoggedUserName(),x);
     }
 
     public void removeVehicle(Vehicle v,boolean removeImageAlso){

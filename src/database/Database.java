@@ -1,6 +1,8 @@
 package database;
 
 import model.UserManager;
+import model.Vehicle.Car;
+import model.Vehicle.Vehicle;
 
 import java.sql.*;
 
@@ -145,5 +147,35 @@ public class Database {
             return new String[]{resultSet.getString(1),resultSet.getString(2),resultSet.getString(3)};
         }
         else return null;
+    }
+
+    public boolean addVehicle(String loggedUserName, Vehicle x) {
+        // By default it should be the logged user !
+        String sql = "insert into vehicles(brand,model,type,registration,ownerID,productionYear)" + "values(?,?,?,?,?,?)";
+        try {
+            preparedStatement = connect.prepareStatement(sql);
+            preparedStatement.setString(1,x.getBrand());
+            preparedStatement.setString(2,x.getModel());
+            if (x instanceof Car){
+                preparedStatement.setString(3,"Car");
+            }
+            else preparedStatement.setString(3,"Motorcycle");
+            preparedStatement.setString(4,x.getRegistrationPlate());
+            preparedStatement.setString(5,loggedUserName);
+            preparedStatement.setInt(6,x.getProductionYear());
+            int added = preparedStatement.executeUpdate();
+            if (added > 0) return true;
+            else return false;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+    }
+
+    private boolean addTaxesByVehicle(Vehicle x){
+        //TODO : implement it ...
+        return false;
     }
 }
