@@ -31,7 +31,6 @@ public class Insurance implements Serializable{
     }
 
     public Insurance(){
-        endDate.clear();
         endDates = new Calendar[4];
     }
     public Insurance(Payments count,double price,Calendar startDate,Calendar endDate){

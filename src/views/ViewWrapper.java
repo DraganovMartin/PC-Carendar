@@ -15,8 +15,8 @@ public class ViewWrapper {
     private Parent root;
     private Stage stage;
     private Scene scene;
-    private static final double SCREEN_WIDTH = Screen.getPrimary().getVisualBounds().getWidth();
-    private static final double SCREEN_HEIGHT = Screen.getPrimary().getVisualBounds().getWidth();
+    private static final double SCREEN_WIDTH = 1280;
+    private static final double SCREEN_HEIGHT = 800;
 
     private static ViewWrapper viewWrapper = new ViewWrapper();
 
