@@ -92,7 +92,8 @@ public class loginController {
 
         @Override
         protected Void call() throws Exception {
-            // TODO implement call
+            manager.loadLoggedUserVehicles();
+            manager.loadCarVignettes();
 
             return null;
         }

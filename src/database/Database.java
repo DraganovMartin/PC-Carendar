@@ -1,10 +1,19 @@
 package database;
 
+import model.Stickers.AnnualVignette;
+import model.Stickers.IVignette;
+import model.Stickers.MonthVignette;
+import model.Stickers.WeekVignette;
 import model.UserManager;
 import model.Vehicle.Car;
+import model.Vehicle.Motorcycle;
 import model.Vehicle.Vehicle;
+import model.taxes.Tax;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 
 /**
  * Created by DevM on 5/17/2017.
@@ -115,24 +124,121 @@ public class Database {
     }
 
     /**
-     * Gets the user's vehicles from the database
+     * Gets the user's vehicles from the database as an ArrayList.
+     *
+     * The method constructs the individual Vehicle objects (Car, Motorcycle) and stores them in an ArrayList.
      *
      * @param username the unique id that identifies which vehicles are owned by this user
-     * @return the user's vehicles
+     * @return a list of the user's vehicles, null if any errors occurred or no vehicles are stored in the db
      */
-    public ResultSet getLoggedUserVehicles(String username){
-        String sql = "select brand, model,vehicles.type,registration,ownerID, productionYear," +
+    /*
+    "select brand, model,vehicles.type,registration,ownerID, productionYear," +
                 " taxes.type, dateFrom, dateTo, price" +
                 " from users Inner Join vehicles On (users.username = vehicles.ownerID)" +
                 " Left Join taxes On (vehicles.idVehicles=taxes.taxes_vehicleID)" +
                 " Where username=?";
+     */
+    public List<Vehicle> getLoggedUserVehicles(String username){
+        String sql = "select registration, brand, model,vehicles.type,body_type, engine_type," +
+                " rangeKm ,image_path, productionYear From vehicles Where ownerID = ?";
+
         try {
             preparedStatement = connect.prepareStatement(sql);
             preparedStatement.setString(1,username);
             resultSet = preparedStatement.executeQuery();
 
-            return resultSet;
-        } catch (SQLException e) {
+            List<Vehicle> vehicles = new ArrayList<>(20);
+
+            while(resultSet.next()){
+
+                String registration = resultSet.getString(1);
+                String brand = resultSet.getString(2);
+                String model = resultSet.getString(3);
+                String bodyType = resultSet.getString(5);
+                String engineType = resultSet.getString(6);
+                String range = resultSet.getString(7);
+                String imagePath = resultSet.getString(8);
+                int productionYear = resultSet.getInt(9);
+
+                switch(resultSet.getString(4)){
+                    case "Car" :
+                        vehicles.add(new Car(registration,brand,model,bodyType,engineType,range,imagePath,productionYear));
+                        break;
+
+                    case "Motorcycle" :
+                        vehicles.add(new Motorcycle(registration,brand,model,bodyType,engineType,range,imagePath,productionYear));
+                        break;
+
+                    default: throw new Exception("No such vehicle type! Please check the type in table vehicles.");
+                }
+            }
+
+            return vehicles;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Gets the current vignette data from the db as an ArrayList
+     * Only one vignette is active per period.
+     * The currently active vignette has a endDate >= Now()
+     *
+     * @param registration the vehicle's registration number
+     * @return the current active vignette
+     */
+    public IVignette getVignetteForVehicle(String registration){
+        String sql = "select taxes.type, dateFrom, price from taxes where vehicle_registration = ? And taxes.type Like '%vignette' And dateTo >= NOW()";
+
+        try {
+            IVignette vignette = null;
+
+            preparedStatement = connect.prepareStatement(sql);
+            preparedStatement.setString(1, registration);
+            resultSet = preparedStatement.executeQuery();
+
+            // Only one vignette is active per period
+            if(resultSet.first()) {
+
+                Date dateFrom = resultSet.getDate(2);
+                double price = resultSet.getDouble(3);
+
+                Calendar cDateFrom = Calendar.getInstance();
+                cDateFrom.setTime(dateFrom);
+
+                // Create the individual vignettes by model type
+                switch (resultSet.getString(1)) {
+                    case "annual-vignette":
+                        vignette = new AnnualVignette(cDateFrom.get(Calendar.YEAR),
+                                cDateFrom.get(Calendar.MONTH),
+                                Calendar.DAY_OF_MONTH,
+                                price);
+                        break;
+
+                    case "month-vignette":
+                        vignette = new MonthVignette(cDateFrom.get(Calendar.YEAR),
+                                cDateFrom.get(Calendar.MONTH),
+                                Calendar.DAY_OF_MONTH,
+                                price);
+                        break;
+
+                    case "week-vignette":
+                        vignette = new WeekVignette(cDateFrom.get(Calendar.YEAR),
+                                cDateFrom.get(Calendar.MONTH),
+                                Calendar.DAY_OF_MONTH,
+                                price);
+                        break;
+
+                    default:
+                        throw new Exception("No such vehicle type! Please check the type in table vehicles.");
+                }
+            }
+
+            return vignette;
+
+        }catch (Exception e){
+            e.printStackTrace();
             return null;
         }
     }
