@@ -86,6 +86,8 @@ public class addCarController {
     @FXML
     private DatePicker insDateStartDP;
 
+    private URL imageUrl;
+
     private IVignette setAndGetVignette(){
         IVignette vignette;
         if (vigTypeCombo.getValue() == null){
@@ -259,8 +261,15 @@ public class addCarController {
             vehicle.getTax().setEndDate(date.getYear(),date.getMonthValue()-1,date.getDayOfMonth());
         }
 
+        if(imageUrl != null){
+            vehicle.setPathToImage(imageUrl.toString());
+        }
+
         vehicle.setInsurance(setAndGetInsurance());
-        userManager.addVehicle(vehicle);
+        if(!userManager.addVehicle(vehicle)){
+            showDialogError("Error while adding vehicle!");
+        }
+
         cancelBtn.fire();
     }
 
@@ -286,7 +295,7 @@ public class addCarController {
         fileChooser.getExtensionFilters().
                 add(new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg"));
         File selectedFile = fileChooser.showOpenDialog(thisStage);
-        URL imageUrl = null;
+        imageUrl = null;
         try {
             imageUrl = selectedFile.toURI().toURL();
         } catch (MalformedURLException e) {

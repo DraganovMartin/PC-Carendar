@@ -12,6 +12,8 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="views.addCarController">
    <children>
       <Label layoutX="534.0" layoutY="163.0" text="Registration number :" AnchorPane.leftAnchor="534.0" AnchorPane.topAnchor="163.0" />
@@ -46,8 +48,26 @@
                                <Font size="14.0" />
                            </font>
                        </Label>
-                       <ComboBox fx:id="typeCombo" layoutX="386.0" layoutY="163.0" prefWidth="150.0" promptText="Sedan" AnchorPane.rightAnchor="722.0" />
-                       <ComboBox fx:id="engineCombo" layoutX="922.0" layoutY="160.0" prefWidth="150.0" promptText="Gasoline" AnchorPane.rightAnchor="173.0" />
+                       <ComboBox fx:id="typeCombo" layoutX="386.0" layoutY="163.0" prefWidth="150.0" promptText="Sedan" AnchorPane.rightAnchor="722.0" >
+                           <items>
+                               <FXCollections fx:factory="observableArrayList">
+                                   <String fx:value="Sedan" />
+                                   <String fx:value="Jeep" />
+                                   <String fx:value="Hatchback" />
+                                   <String fx:value="Coupe" />
+                               </FXCollections>
+                           </items>
+                       </ComboBox>
+
+                       <ComboBox fx:id="engineCombo" layoutX="922.0" layoutY="160.0" prefWidth="150.0" promptText="Gasoline" AnchorPane.rightAnchor="173.0">
+                           <items>
+                               <FXCollections fx:factory="observableArrayList">
+                                   <String fx:value="Gasoline" />
+                                   <String fx:value="Diesel" />
+                                   <String fx:value="Hybrid" />
+                               </FXCollections>
+                           </items>
+                       </ComboBox>
                        <Label layoutX="856.0" layoutY="164.0" prefHeight="17.0" prefWidth="53.0" text="Engine :" AnchorPane.rightAnchor="349.0">
                            <font>
                                <Font size="14.0" />
@@ -70,7 +90,15 @@
                                <Font size="14.0" />
                            </font>
                        </Label>
-                       <ComboBox fx:id="vigTypeCombo" layoutX="386.0" layoutY="369.0" prefWidth="150.0" promptText="Week" AnchorPane.rightAnchor="722.0" />
+                       <ComboBox fx:id="vigTypeCombo" layoutX="386.0" layoutY="369.0" prefWidth="150.0" promptText="Week" AnchorPane.rightAnchor="722.0">
+                           <items>
+                               <FXCollections fx:factory="observableArrayList">
+                                   <String fx:value="Week" />
+                                   <String fx:value="Month" />
+                                   <String fx:value="Annual" />
+                               </FXCollections>
+                           </items>
+                       </ComboBox>
                        <Label layoutX="853.0" layoutY="361.0" prefHeight="42.0" prefWidth="62.0" text="Vignette start date" wrapText="true" AnchorPane.rightAnchor="343.0">
                            <font>
                                <Font size="14.0" />
@@ -106,7 +134,16 @@
                                <Font size="14.0" />
                            </font>
                        </Label>
-                       <ComboBox fx:id="insurancePayCountDP" layoutX="387.0" layoutY="704.0" prefWidth="150.0" promptText="Four" AnchorPane.rightAnchor="721.0" />
+                       <ComboBox fx:id="insurancePayCountDP" layoutX="387.0" layoutY="704.0" prefWidth="150.0" promptText="FOUR" AnchorPane.rightAnchor="721.0" >
+                           <items>
+                               <FXCollections fx:factory="observableArrayList">
+                                   <String fx:value="FOUR" />
+                                   <String fx:value="THREE" />
+                                   <String fx:value="TWO" />
+                                   <String fx:value="ONE" />
+                               </FXCollections>
+                           </items>
+                       </ComboBox>
                        <Label layoutX="854.0" layoutY="683.0" prefHeight="65.0" prefWidth="62.0" text="Insurance date start" wrapText="true" AnchorPane.rightAnchor="342.0">
                            <font>
                                <Font size="14.0" />

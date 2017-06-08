@@ -257,18 +257,34 @@ public class Database {
 
     public boolean addVehicle(String loggedUserName, Vehicle x) {
         // By default it should be the logged user !
-        String sql = "insert into vehicles(brand,model,type,registration,ownerID,productionYear)" + "values(?,?,?,?,?,?)";
+        String sql = "insert into vehicles(registration,ownerID,brand,model,type,body_type,engine_type,rangeKm,image_path,productionYear)" + "values(?,?,?,?,?,?,?,?,?,?)";
         try {
             preparedStatement = connect.prepareStatement(sql);
-            preparedStatement.setString(1,x.getBrand());
-            preparedStatement.setString(2,x.getModel());
+            preparedStatement.setString(1,x.getRegistrationPlate());
+            preparedStatement.setString(2,loggedUserName);
+            preparedStatement.setString(3,x.getBrand());
+            preparedStatement.setString(4,x.getModel());
             if (x instanceof Car){
-                preparedStatement.setString(3,"Car");
+                Car c = (Car) x;
+
+                preparedStatement.setString(5,"Car");
+                preparedStatement.setString(6,c.getCarType());
+                preparedStatement.setString(7,c.getEngineType());
+                preparedStatement.setString(8,c.getKmRange());
+                preparedStatement.setString(9,c.getPathToImage());
+                preparedStatement.setInt(10,c.getProductionYear());
             }
-            else preparedStatement.setString(3,"Motorcycle");
-            preparedStatement.setString(4,x.getRegistrationPlate());
-            preparedStatement.setString(5,loggedUserName);
-            preparedStatement.setInt(6,x.getProductionYear());
+            else {
+                Motorcycle m = (Motorcycle) x;
+
+                preparedStatement.setString(5,"Motorcycle");
+                preparedStatement.setString(6,m.getMotorcycleType());
+                preparedStatement.setString(7,m.getEngineType());
+                preparedStatement.setString(8,m.getKmRange());
+                preparedStatement.setString(9,m.getPathToImage());
+                preparedStatement.setInt(10,m.getProductionYear());
+            }
+
             int added = preparedStatement.executeUpdate();
             if (added > 0) return true;
             else return false;

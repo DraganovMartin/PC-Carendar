@@ -97,9 +97,14 @@ public class UserManager implements IUserAuthenticator,Serializable {
         registeredUsers.add(x);
     }
 
-    public void addVehicle(Vehicle x){
-        loggedUser.addVehicle(x);
-        database.addVehicle(getLoggedUserName(),x);
+    public boolean addVehicle(Vehicle x){
+        // TODO add vignettes and taxes
+        if(database.addVehicle(getLoggedUserName(),x)){
+            loggedUser.addVehicle(x);
+            return true;
+        }
+
+        return false;
     }
 
 

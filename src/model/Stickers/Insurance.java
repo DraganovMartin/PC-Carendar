@@ -31,7 +31,10 @@ public class Insurance implements Serializable{
     }
 
     public Insurance(){
+        Calendar initDate = Calendar.getInstance();
+        endDate = initDate;
         endDates = new Calendar[4];
+        startDate = initDate;
     }
     public Insurance(Payments count,double price,Calendar startDate,Calendar endDate){
         this.type = count.levelCode;
@@ -77,6 +80,7 @@ public class Insurance implements Serializable{
     public void setStartDate(int year,int month,int day){
         if (year > 0 && month >= 0 && day >= 0) {
             startDate.clear();
+            endDate.clear();
             startDate.set(year, month, day);
             if (type > 0 && type == (Payments.ONE.levelCode)) {
                 endDate.set(year + 1, month, day);
