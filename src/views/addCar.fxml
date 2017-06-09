@@ -57,6 +57,9 @@
                                    <String fx:value="Coupe" />
                                </FXCollections>
                            </items>
+                           <value>
+                               <String fx:value="Sedan" />
+                           </value>
                        </ComboBox>
 
                        <ComboBox fx:id="engineCombo" layoutX="922.0" layoutY="160.0" prefWidth="150.0" promptText="Gasoline" AnchorPane.rightAnchor="173.0">
@@ -67,6 +70,9 @@
                                    <String fx:value="Hybrid" />
                                </FXCollections>
                            </items>
+                           <value>
+                               <String fx:value="Gasoline" />
+                           </value>
                        </ComboBox>
                        <Label layoutX="856.0" layoutY="164.0" prefHeight="17.0" prefWidth="53.0" text="Engine :" AnchorPane.rightAnchor="349.0">
                            <font>
@@ -98,6 +104,9 @@
                                    <String fx:value="Annual" />
                                </FXCollections>
                            </items>
+                           <value>
+                               <String fx:value="Week" />
+                           </value>
                        </ComboBox>
                        <Label layoutX="853.0" layoutY="361.0" prefHeight="42.0" prefWidth="62.0" text="Vignette start date" wrapText="true" AnchorPane.rightAnchor="343.0">
                            <font>
@@ -143,6 +152,9 @@
                                    <String fx:value="ONE" />
                                </FXCollections>
                            </items>
+                           <value>
+                               <String fx:value="FOUR" />
+                           </value>
                        </ComboBox>
                        <Label layoutX="854.0" layoutY="683.0" prefHeight="65.0" prefWidth="62.0" text="Insurance date start" wrapText="true" AnchorPane.rightAnchor="342.0">
                            <font>

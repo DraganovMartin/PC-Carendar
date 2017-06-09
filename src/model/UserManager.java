@@ -5,7 +5,7 @@ import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TreeSet;
+import java.util.TreeSet;;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -13,7 +13,6 @@ import java.util.stream.Collectors;
 import database.Database;
 import model.Stickers.IVignette;
 import model.Vehicle.Car;
-import model.Vehicle.Motorcycle;
 import model.Vehicle.Vehicle;
 import model.authentication.IUserAuthenticator;
 import model.authentication.WeakPassException;
@@ -136,8 +135,14 @@ public class UserManager implements IUserAuthenticator,Serializable {
         }
     }
 
-    public void removeVehicle(Vehicle v,boolean removeImageAlso){
-        loggedUser.removeVehicle(v,removeImageAlso);
+    public void removeVehicle(Vehicle v,boolean removeImageAlso) throws Exception{
+        // TODO delete Tax, Vignettes from db
+        boolean result =  database.removeVehicle(v.getRegistrationPlate());
+
+        if(result)
+            loggedUser.removeVehicle(v, removeImageAlso);
+        else
+            throw new Exception("Error deleting vehicle from db!");
     }
 
     public String getLoggedUserName() {

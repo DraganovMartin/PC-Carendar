@@ -1,0 +1,8 @@
+.context-menu {
+    -fx-font-size: 20;
+    -fx-background-color: #424242;
+}
+
+.menu-item .label {
+    -fx-text-fill:white;
+}

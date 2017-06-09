@@ -2,13 +2,10 @@ package views;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
+import javafx.scene.control.*;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 import model.UserManager;
 import model.Vehicle.Car;
 import model.Vehicle.Vehicle;
@@ -17,12 +14,15 @@ import views.listView.VehicleCellAdapter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class garageController {
     private final UserManager userManager = UserManager.getInstance();
     private final ViewWrapper viewWrapper = ViewWrapper.getInstance();
     private final List<String> values;
     private List<Vehicle> vehicles;
+    private final ContextMenu contextMenu = new ContextMenu();
 
     public garageController(){
         values = Arrays.asList("car", "motorcycle");
@@ -52,6 +52,33 @@ public class garageController {
             // Applies the custom cell design using the VehicleCellAdapter class
             vehicleListView.setCellFactory(vehicleListView -> new VehicleCellAdapter());
         }
+
+        MenuItem editItem = new MenuItem("Edit");
+        MenuItem deleteItem = new MenuItem("Delete");
+
+        contextMenu.getItems().addAll(editItem,deleteItem);
+        vehicleListView.setContextMenu(contextMenu);
+
+        editItem.setOnAction(e -> {
+           // TODO implement edit
+        });
+
+        deleteItem.setOnAction(e -> {
+            int selectedIndex = vehicleListView.getSelectionModel().getSelectedIndex();
+
+            Vehicle v = vehicleListView.getItems().get(selectedIndex);
+            try {
+                userManager.removeVehicle(v,false);
+                vehicleListView.getItems().remove(selectedIndex);
+
+                showInfoDialog("Vehicle deleted successfully!");
+
+            } catch (Exception err) {
+                err.printStackTrace();
+                Logger.getGlobal().log(Level.SEVERE, "Error deleting vehicle! \nStack trace:\n" + err.getMessage());
+            }
+
+        });
     }
 
     /**
@@ -72,10 +99,11 @@ public class garageController {
     public void selectVehicle(MouseEvent mouseEvent) {
         String selected = vehicleChoiceListView.getSelectionModel().getSelectedItem();
         if (selected != null){
-            if (selected.equals("car")){
+
+            if (selected.equals("car")) {
                 // Go to add car screen
                 try {
-                    viewWrapper.setStage((Stage)addVehicleBtn.getScene().getWindow());
+                    viewWrapper.setStage((Stage) addVehicleBtn.getScene().getWindow());
                     viewWrapper.setRoot("addCar.fxml");
                     viewWrapper.setSceneRoot(viewWrapper.getRoot());
                     viewWrapper.setStageScene(viewWrapper.getScene());
@@ -83,21 +111,34 @@ public class garageController {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            }
-            else {
+            } else {
                 // TODO : go to addMotorcycle screen
             }
         }
     }
 
-    public void openDetailsView(MouseEvent mouseEvent){
+
+    public void openDetailsView(MouseEvent mouseEvent) {
         Vehicle v = vehicleListView.getSelectionModel().getSelectedItem();
-        if(v instanceof  Car){
-            // TODO goto details view car
-            System.out.println("Car");
-        }else{
-            // TODO goto details view car
-            System.out.println("Motorcycle");
+
+        if (mouseEvent.getButton() == MouseButton.PRIMARY){
+            if (v instanceof Car) {
+                // TODO goto details view car
+                System.out.println("Car");
+            } else {
+                // TODO goto details view car
+                System.out.println("Motorcycle");
+            }
+
+            mouseEvent.consume();
         }
+    }
+
+    private void showInfoDialog(String text){
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Info");
+        alert.setHeaderText("Vehicle deletion");
+        alert.setContentText(text);
+        alert.show();
     }
 }

@@ -300,4 +300,25 @@ public class Database {
         //TODO : implement it ...
         return false;
     }
+
+    /**
+     * Removes a vehicle from the vehicles table using registration
+     * @param registration the vehicle's registration number
+     * @return true if operation wa successful false otherwise
+     */
+    public boolean removeVehicle(String registration){
+        String sql = "Delete From vehicles Where registration = ? limit 1";
+
+        try {
+            preparedStatement = connect.prepareStatement(sql);
+            preparedStatement.setString(1,registration);
+
+            preparedStatement.executeUpdate();
+
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }
