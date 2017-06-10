@@ -100,6 +100,7 @@ public class addCarController {
             vigStartDP.requestFocus();
             return null;
         }
+
         LocalDate date = vigStartDP.getValue();
         String vigType = vigTypeCombo.getValue();
         //System.out.println("Year : " + date.getYear() +"Month : " + (date.getMonth().getValue()-1) + "Day : " + date.getDayOfMonth());
@@ -121,7 +122,7 @@ public class addCarController {
 
     private Insurance setAndGetInsurance(){
         Insurance insurance = new Insurance();
-        if (insuranceTF.getText() == null){
+        if (insuranceTF.getText().equals("")){
             showDialogError("Please set insurance tax !");
             insuranceTF.requestFocus();
             return null;
@@ -160,13 +161,13 @@ public class addCarController {
         insurance.setStartDate(date.getYear(),date.getMonthValue()-1,date.getDayOfMonth());
 
 
-
         return insurance;
     }
 
     @FXML
     void saveCar(ActionEvent event) {
-        if(regNumTF.getText() == null){
+        // Changed because when getText() is empty it returns empty string instead of null
+        if(regNumTF.getText().equals("")){
             showDialogError("Please enter vehicle's registration number !");
             regNumTF.requestFocus();
             return;
@@ -175,6 +176,8 @@ public class addCarController {
             vehicle.setRegistrationPlate(regNumTF.getText());
         }
 
+        // Can skip check for empty, because I added a default value in addCar.fxml
+        // To remove default value remove the <value> tag in the ComboBox in fxml
         if (typeCombo.getValue()== null){
             showDialogError("Please choose car type !");
             typeCombo.requestFocus();
@@ -184,7 +187,7 @@ public class addCarController {
             vehicle.setCarType(typeCombo.getValue());
         }
 
-        if (modelTF.getText()== null){
+        if (modelTF.getText().equals("")){
             showDialogError("Please enter car model !");
             modelTF.requestFocus();
             return;
@@ -193,7 +196,7 @@ public class addCarController {
             vehicle.setModel(modelTF.getText());
         }
 
-        if (brandTF.getText()== null){
+        if (brandTF.getText().equals("")){
             showDialogError("Please enter car brand !");
             brandTF.requestFocus();
             return;
@@ -211,7 +214,7 @@ public class addCarController {
             vehicle.setEngineType(engineCombo.getValue());
         }
 
-        if (yearTF.getText()== null){
+        if (yearTF.getText().equals("") ){
             showDialogError("Please enter production year !");
             yearTF.requestFocus();
             return;
@@ -220,7 +223,7 @@ public class addCarController {
             vehicle.setProductionYear(Integer.parseInt(yearTF.getText()));
         }
 
-        if (rangeTF.getText()== null){
+        if (rangeTF.getText().equals("")){
             showDialogError("Please enter how many km's vehicle travelled !");
             rangeTF.requestFocus();
             return;
@@ -229,11 +232,14 @@ public class addCarController {
             vehicle.setKmRange(rangeTF.getText());
         }
 
-        if (setAndGetVignette() != null) {
-            vehicle.setVignette(setAndGetVignette());
+        IVignette vignette = setAndGetVignette();
+        if (vignette  == null) {
+           return;
+        }else{
+            vehicle.setVignette(vignette);
         }
 
-        if (oilChangeTF.getText()== null){
+        if (oilChangeTF.getText().equals("")){
             showDialogError("Please on what km's is next oil change !");
             oilChangeTF.requestFocus();
             return;
@@ -242,7 +248,7 @@ public class addCarController {
             vehicle.setNextOilChange(oilChangeTF.getText());
         }
 
-        if (taxTF.getText()== null){
+        if (taxTF.getText().equals("")){
             showDialogError("Please enter vehicle's tax !");
             taxTF.requestFocus();
             return;
@@ -265,7 +271,13 @@ public class addCarController {
             vehicle.setPathToImage(imageUrl.toString());
         }
 
-        vehicle.setInsurance(setAndGetInsurance());
+        Insurance insurance = setAndGetInsurance();
+        if(insurance == null){ // No return was present and a Car was added even if insurance was empty
+            return;
+        }else {
+            vehicle.setInsurance(insurance);
+        }
+
         if(!userManager.addVehicle(vehicle)){
             showDialogError("Error while adding vehicle!");
         }
@@ -297,11 +309,12 @@ public class addCarController {
         File selectedFile = fileChooser.showOpenDialog(thisStage);
         imageUrl = null;
         try {
-            imageUrl = selectedFile.toURI().toURL();
+            if(selectedFile != null)
+                imageUrl = selectedFile.toURI().toURL();
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
-        if (selectedFile != null) {
+        if (imageUrl != null) {
             carImage.setImage(new Image(imageUrl.toString()));
         }
     }

@@ -96,10 +96,23 @@ public class UserManager implements IUserAuthenticator,Serializable {
         registeredUsers.add(x);
     }
 
+    // Adds cars and vignettes separately for now
+    // If there was an error during vignette addition and no vignette was added the user can edit the vehicle later and add a vignette
     public boolean addVehicle(Vehicle x){
-        // TODO add vignettes and taxes
+        // TODO taxes,insurance
         if(database.addVehicle(getLoggedUserName(),x)){
+            // First add the vehicle
             loggedUser.addVehicle(x);
+
+            // Save vignettes for Cars only and skip motorcycles
+            if(x instanceof Car){
+                IVignette vignette = ((Car)(x)).getVignette();
+                // If no vignette was added skip adding a vignette
+                if (vignette != null){
+                   return database.addVignetteForVehicle(x.getRegistrationPlate(),vignette);
+                }
+            }
+
             return true;
         }
 
@@ -136,10 +149,10 @@ public class UserManager implements IUserAuthenticator,Serializable {
     }
 
     public void removeVehicle(Vehicle v,boolean removeImageAlso) throws Exception{
-        // TODO delete Tax, Vignettes from db
         boolean result =  database.removeVehicle(v.getRegistrationPlate());
 
         if(result)
+            // Removes taxes (vignettes, insurance) as well
             loggedUser.removeVehicle(v, removeImageAlso);
         else
             throw new Exception("Error deleting vehicle from db!");

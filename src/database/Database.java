@@ -259,6 +259,7 @@ public class Database {
         // By default it should be the logged user !
         String sql = "insert into vehicles(registration,ownerID,brand,model,type,body_type,engine_type,rangeKm,image_path,productionYear)" + "values(?,?,?,?,?,?,?,?,?,?)";
         try {
+
             preparedStatement = connect.prepareStatement(sql);
             preparedStatement.setString(1,x.getRegistrationPlate());
             preparedStatement.setString(2,loggedUserName);
@@ -296,13 +297,106 @@ public class Database {
 
     }
 
+    /**
+     * Adds a vignette for the specified car in the db.
+     * A transaction is used so if any errors occur no data will be saved to the db.
+     *
+     * @param registration the unique identifier of the vehicle
+     * @param vignette the vignette object to be inserted
+     * @return true if the vignette was added false otherwise
+     */
+    public boolean addVignetteForVehicle(String registration,IVignette vignette){
+        String sql = "Insert into taxes(vehicle_registration,type,dateFrom,dateTo,price) values(?,?,?,?,?)";
+
+        try {
+            // Sets up a transaction
+            connect.setAutoCommit(false);
+
+            preparedStatement = connect.prepareStatement(sql);
+            preparedStatement.setString(1,registration);
+            preparedStatement.setString(3, vignette.getStartDate());
+            preparedStatement.setString(4,vignette.getEndDate());
+            preparedStatement.setDouble(5,vignette.getPrice());
+
+            switch(vignette.getType()){
+                case "Annual":
+                    preparedStatement.setString(2,"annual-vignette");
+                    break;
+                case "Monthly":
+                    preparedStatement.setString(2,"month-vignette");
+                    break;
+                case "Weekly":
+                    preparedStatement.setString(2,"week-vignette");
+                    break;
+
+            }
+
+            int added = preparedStatement.executeUpdate();
+            if (added > 0){
+                // Commits the changes if everything is ok
+                connect.commit();
+                return true;
+            }
+            else{
+                // Rolls back otherwise
+                connect.rollback();
+                return false;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+
+            if (connect != null) {
+                try {
+                    System.err.print("Transaction is being rolled back");
+                    connect.rollback();
+                } catch(SQLException err) {
+                    err.printStackTrace();
+                }
+            }
+
+            return false;
+        }finally {
+            // In case an exception is thrown before the end of the first try block, setAutocommit(true) in finally block
+            try {
+                connect.setAutoCommit(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
     private boolean addTaxesByVehicle(Vehicle x){
         //TODO : implement it ...
         return false;
     }
 
+
     /**
-     * Removes a vehicle from the vehicles table using registration
+     * Deletes every type of tax (vignettes, insurance, tax) for this vehicle.
+     * Note that first the records fro taxes should be deleted the records from vehicles because of integrity
+     *
+     * @param registration the unique identifier of the vehicle
+     */
+    private void deleteTaxesForVehicle(String registration){
+        String sql = "Delete From taxes Where vehicle_registration = ?";
+
+        try {
+            preparedStatement = connect.prepareStatement(sql);
+            preparedStatement.setString(1,registration);
+
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Removes a vehicle from the vehicles table using registration.
+     * Note that the method also removes all the vehicle's taxes.
+     *
      * @param registration the vehicle's registration number
      * @return true if operation wa successful false otherwise
      */
@@ -310,6 +404,9 @@ public class Database {
         String sql = "Delete From vehicles Where registration = ? limit 1";
 
         try {
+            // First delete all the taxes for the vehicle
+            deleteTaxesForVehicle(registration);
+
             preparedStatement = connect.prepareStatement(sql);
             preparedStatement.setString(1,registration);
 
