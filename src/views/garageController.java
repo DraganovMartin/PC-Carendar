@@ -121,7 +121,7 @@ public class garageController {
     public void openDetailsView(MouseEvent mouseEvent) {
         Vehicle v = vehicleListView.getSelectionModel().getSelectedItem();
 
-        if (mouseEvent.getButton() == MouseButton.PRIMARY){
+        if (v != null && mouseEvent.getButton() == MouseButton.PRIMARY){
             if (v instanceof Car) {
                 // TODO goto details view car
                 System.out.println("Car");
