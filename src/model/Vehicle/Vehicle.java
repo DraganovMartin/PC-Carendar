@@ -117,8 +117,12 @@ public abstract class Vehicle implements Serializable,Comparable<Vehicle> {
         return tax;
     }
 
-    public void setTax(double tax) {
+    public void setTaxAmount(double tax) {
         this.tax.setAmount(tax);
+    }
+
+    public void setTax(VehicleTax tax){
+        this.tax = tax;
     }
 
     public String getNextOilChange() {

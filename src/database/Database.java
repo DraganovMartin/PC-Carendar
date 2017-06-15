@@ -9,11 +9,15 @@ import model.Vehicle.Car;
 import model.Vehicle.Motorcycle;
 import model.Vehicle.Vehicle;
 import model.taxes.Tax;
+import model.taxes.VehicleTax;
 
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by DevM on 5/17/2017.
@@ -243,6 +247,35 @@ public class Database {
         }
     }
 
+    public VehicleTax getTaxForVehicle(String registration){
+        String sql = "Select dateTo, price from taxes where vehicle_registration = ? And taxes.type Like 'Tax' And dateTo >= NOW()";
+
+        try {
+            preparedStatement = connect.prepareStatement(sql);
+            preparedStatement.setString(1,registration);
+
+            resultSet = preparedStatement.executeQuery();
+            VehicleTax tax = null;
+
+            if(resultSet.first()){
+                tax = new VehicleTax();
+
+                tax.setAmount(resultSet.getDouble(2));
+
+                Calendar endDate = Calendar.getInstance();
+                endDate.setTime(resultSet.getDate(1));
+
+                tax.setEndDate(endDate.get(Calendar.YEAR),endDate.get(Calendar.MONTH),endDate.get(Calendar.DAY_OF_MONTH));
+            }
+
+            return tax;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     /**
      * Finds if there is logged user.
      */
@@ -255,6 +288,14 @@ public class Database {
         else return null;
     }
 
+    /**
+     * Adds a vehicle to the db including the tax and insurance.
+     *
+     *
+     * @param loggedUserName the user who ones the vehicle
+     * @param x the user's vehicle
+     * @return true if the vehicle was added successfully
+     */
     public boolean addVehicle(String loggedUserName, Vehicle x) {
         // By default it should be the logged user !
         String sql = "insert into vehicles(registration,ownerID,brand,model,type,body_type,engine_type,rangeKm,image_path,productionYear)" + "values(?,?,?,?,?,?,?,?,?,?)";
@@ -287,7 +328,14 @@ public class Database {
             }
 
             int added = preparedStatement.executeUpdate();
-            if (added > 0) return true;
+            if (added > 0){
+                // Add tax as well
+                if(!addTaxesByVehicle(x.getRegistrationPlate(), x.getTax())){
+                    Logger.getGlobal().log(Level.SEVERE, "Error adding tax to db!");
+                }
+
+                return true;
+            }
             else return false;
 
         } catch (SQLException e) {
@@ -367,15 +415,34 @@ public class Database {
 
     }
 
-    private boolean addTaxesByVehicle(Vehicle x){
-        //TODO : implement it ...
-        return false;
+    private boolean addTaxesByVehicle(String registration, Tax tax){
+        String sql = "Insert into taxes(vehicle_registration, type, dateFrom,dateTo, price) values(?,?,?,?,?)";
+
+        String dateFrom = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
+
+        try {
+            preparedStatement = connect.prepareStatement(sql);
+
+            preparedStatement.setString(1,registration);
+            preparedStatement.setString(2,"Tax");
+            preparedStatement.setString(3,dateFrom);
+            preparedStatement.setString(4,tax.getEndDate());
+            preparedStatement.setDouble(5,tax.getAmount());
+
+            preparedStatement.executeUpdate();
+
+            return true;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
 
     /**
      * Deletes every type of tax (vignettes, insurance, tax) for this vehicle.
-     * Note that first the records fro taxes should be deleted the records from vehicles because of integrity
+     * Note that first the records from taxes should be deleted and them the records from vehicles because of integrity
      *
      * @param registration the unique identifier of the vehicle
      */

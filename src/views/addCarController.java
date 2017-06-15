@@ -6,7 +6,6 @@ package views;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -254,7 +253,7 @@ public class addCarController {
             return;
         }
         else {
-            vehicle.setTax(Double.parseDouble(taxTF.getText()));
+            vehicle.setTaxAmount(Double.parseDouble(taxTF.getText()));
         }
 
         if (taxPayDP.getValue() == null){

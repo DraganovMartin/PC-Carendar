@@ -16,6 +16,8 @@ import model.Vehicle.Car;
 import model.Vehicle.Vehicle;
 import model.authentication.IUserAuthenticator;
 import model.authentication.WeakPassException;
+import model.taxes.Tax;
+import model.taxes.VehicleTax;
 
 /**
  * Singleton class UserManager for creating, registering and managing users.
@@ -122,12 +124,22 @@ public class UserManager implements IUserAuthenticator,Serializable {
 
     /**
      * Loads all the vehicles for the currently logged user from db.
+     * Loads taxes as well.
      */
     public void loadLoggedUserVehicles(){
        List<Vehicle> vehicles =  database.getLoggedUserVehicles(loggedUser.name);
 
-       if(vehicles != null)
+       if(vehicles != null) {
+           for (Vehicle v : vehicles){
+               Tax tax = database.getTaxForVehicle(v.getRegistrationPlate());
+
+               if(tax != null)
+                   v.setTax((VehicleTax) tax);
+           }
+
            loggedUser.loadAllVehicles(vehicles);
+       }
+
     }
 
     /**
