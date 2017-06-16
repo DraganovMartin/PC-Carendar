@@ -1,9 +1,6 @@
 package database;
 
-import model.Stickers.AnnualVignette;
-import model.Stickers.IVignette;
-import model.Stickers.MonthVignette;
-import model.Stickers.WeekVignette;
+import model.Stickers.*;
 import model.UserManager;
 import model.Vehicle.Car;
 import model.Vehicle.Motorcycle;
@@ -247,8 +244,14 @@ public class Database {
         }
     }
 
+    /**
+     * Gets the vehicle's (specified by registration) tax
+     *
+     * @param registration the vehicle's registration
+     * @return the vehicle tax
+     */
     public VehicleTax getTaxForVehicle(String registration){
-        String sql = "Select dateTo, price from taxes where vehicle_registration = ? And taxes.type Like 'Tax' And dateTo >= NOW()";
+        String sql = "Select dateTo, price from taxes where vehicle_registration = ? And taxes.type Like 'tax' And dateTo >= NOW()";
 
         try {
             preparedStatement = connect.prepareStatement(sql);
@@ -269,6 +272,72 @@ public class Database {
             }
 
             return tax;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Gets the insurance data for the specified by 'registration' vehicle from db.
+     *
+     * No that the returned insurance may have expired.
+     *
+     * @param registration the vehicles's registration
+     * @return an Insurance object
+     */
+    public Insurance getInsuranceForVehicle(String registration){
+        // Gets the max dateFrom to filter out older and expired insurances
+        String sql = "select MAX(dateFrom) as dateFrom From taxes Where vehicle_registration = ? And type Like '%insurance'";
+
+        try {
+            preparedStatement = connect.prepareStatement(sql);
+            preparedStatement.setString(1,registration);
+
+            resultSet = preparedStatement.executeQuery();
+
+            if(!resultSet.first()){
+                return null;
+            }
+
+            String getInsuranceDataSql = "select type, price From taxes Where vehicle_registration = ? And type Like '%insurance' And dateFrom = ?";
+            preparedStatement = connect.prepareStatement(getInsuranceDataSql);
+
+            // Get max date from result set
+            Date startDate = resultSet.getDate(1);
+
+            // Get all other insurance data
+            preparedStatement.setString(1,registration);
+            preparedStatement.setDate(2,startDate);
+
+            resultSet = preparedStatement.executeQuery();
+
+            if(!resultSet.first()) {
+                return null;
+            }
+
+            double insurancePrice = resultSet.getDouble(2);
+            Insurance.Payments payments  = null;
+            switch (resultSet.getString(1)){
+                case "1-insurance": payments = Insurance.Payments.ONE; break;
+                case "2-insurance": payments = Insurance.Payments.TWO; break;
+                case "3-insurance": payments = Insurance.Payments.THREE; break;
+                case "4-insurance": payments = Insurance.Payments.FOUR; break;
+            }
+
+            Insurance insurance = new Insurance();
+            insurance.setPrice(insurancePrice);
+            insurance.setTypeCount(payments);
+
+            Calendar endDate = Calendar.getInstance();
+            endDate.setTime(startDate);
+            insurance.setStartDate(endDate.get(Calendar.YEAR),endDate.get(Calendar.MONTH),endDate.get(Calendar.DAY_OF_MONTH));
+
+            // TODO discuss
+            // Insurance may have expired
+            // Could check validity here
+            return insurance;
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -331,11 +400,19 @@ public class Database {
             if (added > 0){
                 // Add tax as well
                 if(!addTaxesByVehicle(x.getRegistrationPlate(), x.getTax())){
+                    // TODO maybe return false and show error popup inside addCar/Motorcycle controller
                     Logger.getGlobal().log(Level.SEVERE, "Error adding tax to db!");
+                }
+
+                // Add insurance as well
+                if(!addInsuranceForVehicle(x.getRegistrationPlate(),x.getInsurance())){
+                    // TODO maybe return false and show error popup inside addCar/Motorcycle controller
+                    Logger.getGlobal().log(Level.SEVERE, "Error adding insurance to db!");
                 }
 
                 return true;
             }
+
             else return false;
 
         } catch (SQLException e) {
@@ -424,10 +501,40 @@ public class Database {
             preparedStatement = connect.prepareStatement(sql);
 
             preparedStatement.setString(1,registration);
-            preparedStatement.setString(2,"Tax");
+            preparedStatement.setString(2,"tax");
             preparedStatement.setString(3,dateFrom);
             preparedStatement.setString(4,tax.getEndDate());
             preparedStatement.setDouble(5,tax.getAmount());
+
+            preparedStatement.executeUpdate();
+
+            return true;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean addInsuranceForVehicle(String registration, Insurance insurance){
+        String sql = "Insert into taxes(vehicle_registration, type, dateFrom,dateTo, price) values(?,?,?,?,?)";
+
+        try {
+            preparedStatement = connect.prepareStatement(sql);
+
+            preparedStatement.setString(1,registration);
+
+            switch (insurance.getTypeCount()){
+                case 1: preparedStatement.setString(2,"1-insurance"); break;
+                case 2: preparedStatement.setString(2,"2-insurance"); break;
+                case 3: preparedStatement.setString(2,"3-insurance"); break;
+                case 4: preparedStatement.setString(2,"4-insurance"); break;
+            }
+
+            preparedStatement.setString(3,insurance.getStartDate());
+            // Ignore end date because it is calculated inside insurance
+            preparedStatement.setString(4,"2017-1-1");
+            preparedStatement.setDouble(5,insurance.getPrice());
 
             preparedStatement.executeUpdate();
 

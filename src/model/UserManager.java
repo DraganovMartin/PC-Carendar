@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 import database.Database;
 import model.Stickers.IVignette;
+import model.Stickers.Insurance;
 import model.Vehicle.Car;
 import model.Vehicle.Vehicle;
 import model.authentication.IUserAuthenticator;
@@ -101,7 +102,8 @@ public class UserManager implements IUserAuthenticator,Serializable {
     // Adds cars and vignettes separately for now
     // If there was an error during vignette addition and no vignette was added the user can edit the vehicle later and add a vignette
     public boolean addVehicle(Vehicle x){
-        // TODO taxes,insurance
+
+        // Adds the tax and insurance
         if(database.addVehicle(getLoggedUserName(),x)){
             // First add the vehicle
             loggedUser.addVehicle(x);
@@ -124,17 +126,25 @@ public class UserManager implements IUserAuthenticator,Serializable {
 
     /**
      * Loads all the vehicles for the currently logged user from db.
-     * Loads taxes as well.
+     * Loads taxes and insurance as well.
      */
     public void loadLoggedUserVehicles(){
        List<Vehicle> vehicles =  database.getLoggedUserVehicles(loggedUser.name);
 
        if(vehicles != null) {
            for (Vehicle v : vehicles){
+               // Load tax
                Tax tax = database.getTaxForVehicle(v.getRegistrationPlate());
+               // Load insurance
+               Insurance insurance = database.getInsuranceForVehicle(v.getRegistrationPlate());
+
 
                if(tax != null)
                    v.setTax((VehicleTax) tax);
+
+               // Insurance may have expired
+               if(insurance != null)
+                   v.setInsurance(insurance);
            }
 
            loggedUser.loadAllVehicles(vehicles);

@@ -1,6 +1,7 @@
 package model.Stickers;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -31,10 +32,9 @@ public class Insurance implements Serializable{
     }
 
     public Insurance(){
-        Calendar initDate = Calendar.getInstance();
-        endDate = initDate;
+        endDate =  Calendar.getInstance();
         endDates = new Calendar[4];
-        startDate = initDate;
+        startDate =  (Calendar) endDate.clone();
     }
     public Insurance(Payments count,double price,Calendar startDate,Calendar endDate){
         this.type = count.levelCode;
@@ -100,6 +100,7 @@ public class Insurance implements Serializable{
             }
             if (type > 0 && type == (Payments.FOUR.levelCode)) {
                 endDate.set(year, month + 3, day);
+                // TODO if endDate = December, December + 3 = December
                 endDates[0] = (Calendar) endDate.clone();
                 endDates[1] = new Calendar.Builder().setDate(endDate.get(Calendar.YEAR),endDate.get(Calendar.MONTH)+3,day).build();
                 endDates[2] = new Calendar.Builder().setDate(endDate.get(Calendar.YEAR),endDate.get(Calendar.MONTH)+3,day).build();
@@ -110,5 +111,8 @@ public class Insurance implements Serializable{
 
     public Calendar[] getEndDates() {
         return endDates;
+    }
+    public String getStartDate(){
+        return new SimpleDateFormat("yyyy-MM-dd").format(startDate.getTime());
     }
 }
