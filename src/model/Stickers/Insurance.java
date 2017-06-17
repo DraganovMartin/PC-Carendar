@@ -100,7 +100,7 @@ public class Insurance implements Serializable{
             }
             if (type > 0 && type == (Payments.FOUR.levelCode)) {
                 endDate.set(year, month + 3, day);
-                // TODO if endDate = December, December + 3 = December
+                // TODO endDates[1] = endDates[2]
                 endDates[0] = (Calendar) endDate.clone();
                 endDates[1] = new Calendar.Builder().setDate(endDate.get(Calendar.YEAR),endDate.get(Calendar.MONTH)+3,day).build();
                 endDates[2] = new Calendar.Builder().setDate(endDate.get(Calendar.YEAR),endDate.get(Calendar.MONTH)+3,day).build();

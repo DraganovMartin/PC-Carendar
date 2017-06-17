@@ -100,19 +100,26 @@ public class garageController {
         String selected = vehicleChoiceListView.getSelectionModel().getSelectedItem();
         if (selected != null){
 
-            if (selected.equals("car")) {
-                // Go to add car screen
-                try {
+            try {
+                if (selected.equals("car")) {
+                    // Go to add car screen
                     viewWrapper.setStage((Stage) addVehicleBtn.getScene().getWindow());
+                    viewWrapper.putExtra("car");
                     viewWrapper.setRoot("addCar.fxml");
                     viewWrapper.setSceneRoot(viewWrapper.getRoot());
                     viewWrapper.setStageScene(viewWrapper.getScene());
                     viewWrapper.getStage().show();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                } else {
+                    // Go to add motorcycle screen
+                    viewWrapper.putExtra("motorcycle");
+                    viewWrapper.setRoot("addMotorcycle.fxml");
+                    viewWrapper.setSceneRoot(viewWrapper.getRoot());
+                    viewWrapper.setStageScene(viewWrapper.getScene());
+                    viewWrapper.getStage().show();
                 }
-            } else {
-                // TODO : go to addMotorcycle screen
+
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }

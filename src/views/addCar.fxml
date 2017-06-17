@@ -14,7 +14,7 @@
 
 <?import javafx.collections.FXCollections?>
 <?import java.lang.String?>
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="views.addCarController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="views.addVehicleController">
    <children>
       <Label layoutX="534.0" layoutY="163.0" text="Registration number :" AnchorPane.leftAnchor="534.0" AnchorPane.topAnchor="163.0" />
       <TextField fx:id="regNumTF" layoutX="666.0" layoutY="159.0" promptText="СА8888СА" AnchorPane.leftAnchor="666.0" AnchorPane.topAnchor="159.0" />
