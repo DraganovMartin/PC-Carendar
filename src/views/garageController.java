@@ -71,7 +71,7 @@ public class garageController {
                 userManager.removeVehicle(v,false);
                 vehicleListView.getItems().remove(selectedIndex);
 
-                showInfoDialog("Vehicle deleted successfully!");
+                showInfoDialog("Vehicle deletion","Vehicle deleted successfully!");
 
             } catch (Exception err) {
                 err.printStackTrace();
@@ -141,11 +141,31 @@ public class garageController {
         }
     }
 
-    private void showInfoDialog(String text){
+    @FXML
+    public void logoutUser(MouseEvent event){
+        if(!userManager.userLogout()){
+            showInfoDialog("Logout","Error, could not logout user!");
+        }
+
+        goToLoginScren();
+    }
+
+    private void showInfoDialog(String headerText, String text){
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Info");
-        alert.setHeaderText("Vehicle deletion");
+        alert.setHeaderText(headerText);
         alert.setContentText(text);
         alert.show();
+    }
+
+    private void goToLoginScren(){
+        try {
+            viewWrapper.setRoot("login.fxml");
+            viewWrapper.setSceneRoot(viewWrapper.getRoot());
+            viewWrapper.setStageScene(viewWrapper.getScene());
+            viewWrapper.getStage().show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

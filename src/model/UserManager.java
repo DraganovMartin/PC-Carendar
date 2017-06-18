@@ -194,10 +194,15 @@ public class UserManager implements IUserAuthenticator,Serializable {
 
 
     /**
+     *  Logout user from database
      *  setting "loggedUser" to null !!
      */
-    public void userLogout(){
+    public boolean userLogout(){
+        if(!database.logOutUser(loggedUser.name))
+            return false;
+
         loggedUser = null;
+        return true;
     }
 
 //    /**

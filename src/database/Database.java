@@ -125,6 +125,31 @@ public class Database {
     }
 
     /**
+     * Logs out a user by setting 0 to isLogged field in the db.
+     *
+     * @param username the user to logout
+     * @return true if logout was successful false otherwise
+     */
+    public boolean logOutUser(String username){
+        String sql = "Update users Set isLogged = 0 Where username = ?";
+
+        try {
+            preparedStatement = connect.prepareStatement(sql);
+            preparedStatement.setString(1,username);
+
+            if(preparedStatement.executeUpdate() == 0)
+                return false;
+
+            return true;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+    }
+
+    /**
      * Gets the user's vehicles from the database as an ArrayList.
      *
      * The method constructs the individual Vehicle objects (Car, Motorcycle) and stores them in an ArrayList.
