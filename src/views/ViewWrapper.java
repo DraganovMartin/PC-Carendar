@@ -19,6 +19,7 @@ public class ViewWrapper {
     private Scene scene;
     private FXMLLoader loader;
     private String extra = null;
+    private Object extraObject = null;
     private static final double SCREEN_WIDTH = 1280;
     private static final double SCREEN_HEIGHT = 800;
 
@@ -38,10 +39,12 @@ public class ViewWrapper {
             try {
                 Object controller = controllerClass.newInstance();
 
-                // Invokes the setExtra method of the controller if it has one
-                for(Method method : controllerClass.getDeclaredMethods()) {
+                // Invokes all the setExtra methods of the controller if such method exists
+                for(Method method : controllerClass.getMethods()) {
                     if (method.getName().equals("setExtra")) {
                         method.invoke(controller, extra);
+                    }else if(method.getName().equals("setObjectExtra")){
+                        method.invoke(controller, extraObject);
                     }
                 }
 
@@ -90,6 +93,9 @@ public class ViewWrapper {
 
     public void putExtra(String extra) {
         this.extra = extra;
+    }
+    public void putExtra(Object obj){
+        this.extraObject = obj;
     }
 
 

@@ -129,15 +129,19 @@ public class garageController {
         Vehicle v = vehicleListView.getSelectionModel().getSelectedItem();
 
         if (v != null && mouseEvent.getButton() == MouseButton.PRIMARY){
-            if (v instanceof Car) {
-                // TODO goto details view car
-                System.out.println("Car");
-            } else {
-                // TODO goto details view car
-                System.out.println("Motorcycle");
-            }
+            try {
+                // Go to details screen
+                viewWrapper.putExtra(v);
+                // TODO improve gui
+                viewWrapper.setRoot("vehicle/vehicleDetailsView.fxml");
+                viewWrapper.setSceneRoot(viewWrapper.getRoot());
+                viewWrapper.setStageScene(viewWrapper.getScene());
+                viewWrapper.getStage().show();
 
-            mouseEvent.consume();
+                mouseEvent.consume();
+            }catch (Exception exc){
+                exc.printStackTrace();
+            }
         }
     }
 
@@ -147,7 +151,7 @@ public class garageController {
             showInfoDialog("Logout","Error, could not logout user!");
         }
 
-        goToLoginScren();
+        goToLoginScreen();
     }
 
     private void showInfoDialog(String headerText, String text){
@@ -158,7 +162,7 @@ public class garageController {
         alert.show();
     }
 
-    private void goToLoginScren(){
+    private void goToLoginScreen(){
         try {
             viewWrapper.setRoot("login.fxml");
             viewWrapper.setSceneRoot(viewWrapper.getRoot());
