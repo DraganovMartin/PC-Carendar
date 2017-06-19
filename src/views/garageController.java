@@ -1,4 +1,5 @@
 package views;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -50,35 +51,50 @@ public class garageController {
             vehicleListView.setItems(FXCollections.observableList(vehicles));
 
             // Applies the custom cell design using the VehicleCellAdapter class
-            vehicleListView.setCellFactory(vehicleListView -> new VehicleCellAdapter());
+            vehicleListView.setCellFactory(vehicleListView -> {
+                VehicleCellAdapter cellAdapter = new VehicleCellAdapter();
+                final ContextMenu contextMenu = new ContextMenu();
+                MenuItem editItem = new MenuItem("Edit");
+                editItem.setOnAction(e -> {
+                    Alert test = new Alert(Alert.AlertType.INFORMATION);
+                    test.setTitle("test");
+                    test.setContentText("Edit");
+                    test.showAndWait();
+                });
+                MenuItem deleteItem = new MenuItem("Delete");
+                deleteItem.setOnAction(e -> {
+                    int selectedIndex = vehicleListView.getSelectionModel().getSelectedIndex();
+
+                    Vehicle v = vehicleListView.getItems().get(selectedIndex);
+                    try {
+                        userManager.removeVehicle(v,false);
+                        vehicleListView.getItems().remove(selectedIndex);
+
+                        showInfoDialog("Vehicle deletion","Vehicle deleted successfully!");
+
+                    } catch (Exception err) {
+                        err.printStackTrace();
+                        Logger.getGlobal().log(Level.SEVERE, "Error deleting vehicle! \nStack trace:\n" + err.getMessage());
+                    }
+
+                });
+
+               contextMenu.getItems().addAll(editItem, deleteItem);
+
+                //cellAdapter.textProperty().bind(cell.itemProperty());
+
+                cellAdapter.emptyProperty().addListener((obs, wasEmpty, isNowEmpty) -> {
+                    if (isNowEmpty) {
+                        cellAdapter.setContextMenu(null);
+                    } else {
+                        cellAdapter.setContextMenu(contextMenu);
+                    }
+                });
+                return cellAdapter ;
+
+            });
         }
 
-        MenuItem editItem = new MenuItem("Edit");
-        MenuItem deleteItem = new MenuItem("Delete");
-
-        contextMenu.getItems().addAll(editItem,deleteItem);
-        vehicleListView.setContextMenu(contextMenu);
-
-        editItem.setOnAction(e -> {
-           // TODO implement edit
-        });
-
-        deleteItem.setOnAction(e -> {
-            int selectedIndex = vehicleListView.getSelectionModel().getSelectedIndex();
-
-            Vehicle v = vehicleListView.getItems().get(selectedIndex);
-            try {
-                userManager.removeVehicle(v,false);
-                vehicleListView.getItems().remove(selectedIndex);
-
-                showInfoDialog("Vehicle deletion","Vehicle deleted successfully!");
-
-            } catch (Exception err) {
-                err.printStackTrace();
-                Logger.getGlobal().log(Level.SEVERE, "Error deleting vehicle! \nStack trace:\n" + err.getMessage());
-            }
-
-        });
     }
 
     /**

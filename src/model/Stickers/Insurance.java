@@ -105,10 +105,6 @@ public class Insurance implements Serializable{
                 endDates[2] = new Calendar.Builder().setDate(endDates[1].get(Calendar.YEAR),endDates[1].get(Calendar.MONTH)+3,day).build();
                 endDates[3] = new Calendar.Builder().setDate(endDates[2].get(Calendar.YEAR),endDates[2].get(Calendar.MONTH)+3,day).build();
 
-                // fixed endDates[1] = endDates[2] = endDates[3] because endDate stayed the same
-
-                // endDates[2] = new Calendar.Builder().setDate(endDate.get(Calendar.YEAR),endDate.get(Calendar.MONTH)+3,day).build();
-                // endDates[3] = new Calendar.Builder().setDate(endDate.get(Calendar.YEAR),endDate.get(Calendar.MONTH)+3,day).build();
             }
         }
     }
