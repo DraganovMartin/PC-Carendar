@@ -95,16 +95,20 @@ public class Insurance implements Serializable{
                 endDate.set(year, month +4, day);
                 endDates[0] = (Calendar) endDate.clone();
                 endDates[1] = new Calendar.Builder().setDate(endDate.get(Calendar.YEAR),endDate.get(Calendar.MONTH)+4,day).build();
-                endDates[2] = new Calendar.Builder().setDate(endDate.get(Calendar.YEAR),endDate.get(Calendar.MONTH)+4,day).build();
+                endDates[2] = new Calendar.Builder().setDate(endDates[1].get(Calendar.YEAR),endDates[1].get(Calendar.MONTH)+4,day).build();
 
             }
             if (type > 0 && type == (Payments.FOUR.levelCode)) {
                 endDate.set(year, month + 3, day);
-                // TODO endDates[1] = endDates[2]
                 endDates[0] = (Calendar) endDate.clone();
                 endDates[1] = new Calendar.Builder().setDate(endDate.get(Calendar.YEAR),endDate.get(Calendar.MONTH)+3,day).build();
-                endDates[2] = new Calendar.Builder().setDate(endDate.get(Calendar.YEAR),endDate.get(Calendar.MONTH)+3,day).build();
-                endDates[3] = new Calendar.Builder().setDate(endDate.get(Calendar.YEAR),endDate.get(Calendar.MONTH)+3,day).build();
+                endDates[2] = new Calendar.Builder().setDate(endDates[1].get(Calendar.YEAR),endDates[1].get(Calendar.MONTH)+3,day).build();
+                endDates[3] = new Calendar.Builder().setDate(endDates[2].get(Calendar.YEAR),endDates[2].get(Calendar.MONTH)+3,day).build();
+
+                // fixed endDates[1] = endDates[2] = endDates[3] because endDate stayed the same
+
+                // endDates[2] = new Calendar.Builder().setDate(endDate.get(Calendar.YEAR),endDate.get(Calendar.MONTH)+3,day).build();
+                // endDates[3] = new Calendar.Builder().setDate(endDate.get(Calendar.YEAR),endDate.get(Calendar.MONTH)+3,day).build();
             }
         }
     }
