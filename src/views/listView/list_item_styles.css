@@ -1,0 +1,19 @@
+.card-background{
+    -fx-background-color: #616161;
+}
+
+/* Set the text colour for texts with this class to white*/
+.white-font{
+    -fx-text-fill: white;
+}
+
+/* Sets the info text font size */
+.info-text{
+    -fx-font-size: 18;
+}
+
+/* Style the item's title */
+#item-title{
+    -fx-font-weight: bold;
+    -fx-font-size: 22;
+}

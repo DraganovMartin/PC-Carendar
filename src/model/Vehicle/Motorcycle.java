@@ -13,6 +13,16 @@ public class Motorcycle extends Vehicle {
         super();
     }
 
+    public Motorcycle(String registrationPlate, String brand, String model, String motorcycleTypeType, String engineType,
+                      String range, String pathToImage, int productionYear) {
+
+        super(registrationPlate, brand, model, pathToImage, productionYear);
+
+        this.motorcycleType = motorcycleTypeType;
+        this.engineType = engineType;
+        this.kmRange = range;
+    }
+
     public String getEngineType() {
         return engineType;
     }

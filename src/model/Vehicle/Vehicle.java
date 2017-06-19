@@ -29,11 +29,12 @@ public abstract class Vehicle implements Serializable,Comparable<Vehicle> {
         tax = new VehicleTax();
     }
 
-    public Vehicle(String brand, String model,int productionYear,String registrationPlate){
+    public Vehicle(String registrationPlate, String brand, String model,String pathToImage,int productionYear){
+        this.registrationPlate = registrationPlate;
         this.brand = brand;
         this.model = model;
+        this.pathToImage = pathToImage;
         this.productionYear = productionYear;
-        this.registrationPlate = registrationPlate;
         this.myId = ++id;
     }
 
@@ -116,8 +117,12 @@ public abstract class Vehicle implements Serializable,Comparable<Vehicle> {
         return tax;
     }
 
-    public void setTax(double tax) {
+    public void setTaxAmount(double tax) {
         this.tax.setAmount(tax);
+    }
+
+    public void setTax(VehicleTax tax){
+        this.tax = tax;
     }
 
     public String getNextOilChange() {
@@ -129,10 +134,12 @@ public abstract class Vehicle implements Serializable,Comparable<Vehicle> {
     }
     @Override
     public boolean equals(Object obj) {
-        Vehicle toCompare = (Vehicle) obj;
-        if(this.brand.equals(toCompare.brand)){
-            if (this.model.equals(toCompare.model)){
-                if (this.myId == toCompare.myId) return true;
+        if(obj != null) {
+            Vehicle toCompare = (Vehicle) obj;
+            if (this.brand.equals(toCompare.brand)) {
+                if (this.model.equals(toCompare.model)) {
+                    if (this.myId == toCompare.myId) return true;
+                }
             }
         }
 

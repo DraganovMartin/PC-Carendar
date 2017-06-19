@@ -5,14 +5,20 @@ import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TreeSet;
+import java.util.TreeSet;;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import database.Database;
+import model.Stickers.IVignette;
+import model.Stickers.Insurance;
+import model.Vehicle.Car;
 import model.Vehicle.Vehicle;
 import model.authentication.IUserAuthenticator;
 import model.authentication.WeakPassException;
+import model.taxes.Tax;
+import model.taxes.VehicleTax;
 
 /**
  * Singleton class UserManager for creating, registering and managing users.
@@ -93,13 +99,85 @@ public class UserManager implements IUserAuthenticator,Serializable {
         registeredUsers.add(x);
     }
 
-    public void addVehicle(Vehicle x){
-        loggedUser.addVehicle(x);
-        database.addVehicle(getLoggedUserName(),x);
+    // Adds cars and vignettes separately for now
+    // If there was an error during vignette addition and no vignette was added the user can edit the vehicle later and add a vignette
+    public boolean addVehicle(Vehicle x){
+
+        // Adds the tax and insurance
+        if(database.addVehicle(getLoggedUserName(),x)){
+            // First add the vehicle
+            loggedUser.addVehicle(x);
+
+            // Save vignettes for Cars only and skip motorcycles
+            if(x instanceof Car){
+                IVignette vignette = ((Car)(x)).getVignette();
+                // If no vignette was added skip adding a vignette
+                if (vignette != null){
+                   return database.addVignetteForVehicle(x.getRegistrationPlate(),vignette);
+                }
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
-    public void removeVehicle(Vehicle v,boolean removeImageAlso){
-        loggedUser.removeVehicle(v,removeImageAlso);
+
+    /**
+     * Loads all the vehicles for the currently logged user from db.
+     * Loads taxes and insurance as well.
+     */
+    public void loadLoggedUserVehicles(){
+       List<Vehicle> vehicles =  database.getLoggedUserVehicles(loggedUser.name);
+
+       if(vehicles != null) {
+           for (Vehicle v : vehicles){
+               // Load tax
+               Tax tax = database.getTaxForVehicle(v.getRegistrationPlate());
+               // Load insurance
+               Insurance insurance = database.getInsuranceForVehicle(v.getRegistrationPlate());
+
+
+               if(tax != null)
+                   v.setTax((VehicleTax) tax);
+
+               // Insurance may have expired
+               if(insurance != null)
+                   v.setInsurance(insurance);
+           }
+
+           loggedUser.loadAllVehicles(vehicles);
+       }
+
+    }
+
+    /**
+     * Loads the currently logged user's car vignettes
+     */
+    public void loadCarVignettes(){
+        List<Car> cars = loggedUser.ownedVehicles.stream()
+                                .filter((v) -> v instanceof Car)
+                                .map((v) -> (Car) v)
+                                .collect(Collectors.toList());
+
+        for(Car c : cars){
+           IVignette vignette = database.getVignetteForVehicle(c.getRegistrationPlate());
+
+           // Add only if there is an active vignette
+           if(vignette != null)
+               c.setVignette(vignette);
+        }
+    }
+
+    public void removeVehicle(Vehicle v,boolean removeImageAlso) throws Exception{
+        boolean result =  database.removeVehicle(v.getRegistrationPlate());
+
+        if(result)
+            // Removes taxes (vignettes, insurance) as well
+            loggedUser.removeVehicle(v, removeImageAlso);
+        else
+            throw new Exception("Error deleting vehicle from db!");
     }
 
     public String getLoggedUserName() {
@@ -116,10 +194,15 @@ public class UserManager implements IUserAuthenticator,Serializable {
 
 
     /**
+     *  Logout user from database
      *  setting "loggedUser" to null !!
      */
-    public void userLogout(){
+    public boolean userLogout(){
+        if(!database.logOutUser(loggedUser.name))
+            return false;
+
         loggedUser = null;
+        return true;
     }
 
 //    /**
@@ -194,6 +277,10 @@ public class UserManager implements IUserAuthenticator,Serializable {
             } else {
                 throw new NullPointerException();
             }
+        }
+
+        public void loadAllVehicles(List<Vehicle> vehicles){
+            ownedVehicles.addAll(vehicles);
         }
 
         public void removeVehicle(Vehicle x,boolean removeImageAlso) {

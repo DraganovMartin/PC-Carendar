@@ -1,6 +1,7 @@
 package model.Stickers;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -31,7 +32,9 @@ public class Insurance implements Serializable{
     }
 
     public Insurance(){
+        endDate =  Calendar.getInstance();
         endDates = new Calendar[4];
+        startDate =  (Calendar) endDate.clone();
     }
     public Insurance(Payments count,double price,Calendar startDate,Calendar endDate){
         this.type = count.levelCode;
@@ -77,6 +80,7 @@ public class Insurance implements Serializable{
     public void setStartDate(int year,int month,int day){
         if (year > 0 && month >= 0 && day >= 0) {
             startDate.clear();
+            endDate.clear();
             startDate.set(year, month, day);
             if (type > 0 && type == (Payments.ONE.levelCode)) {
                 endDate.set(year + 1, month, day);
@@ -91,20 +95,28 @@ public class Insurance implements Serializable{
                 endDate.set(year, month +4, day);
                 endDates[0] = (Calendar) endDate.clone();
                 endDates[1] = new Calendar.Builder().setDate(endDate.get(Calendar.YEAR),endDate.get(Calendar.MONTH)+4,day).build();
-                endDates[2] = new Calendar.Builder().setDate(endDate.get(Calendar.YEAR),endDate.get(Calendar.MONTH)+4,day).build();
+                endDates[2] = new Calendar.Builder().setDate(endDates[1].get(Calendar.YEAR),endDates[1].get(Calendar.MONTH)+4,day).build();
 
             }
             if (type > 0 && type == (Payments.FOUR.levelCode)) {
                 endDate.set(year, month + 3, day);
                 endDates[0] = (Calendar) endDate.clone();
                 endDates[1] = new Calendar.Builder().setDate(endDate.get(Calendar.YEAR),endDate.get(Calendar.MONTH)+3,day).build();
-                endDates[2] = new Calendar.Builder().setDate(endDate.get(Calendar.YEAR),endDate.get(Calendar.MONTH)+3,day).build();
-                endDates[3] = new Calendar.Builder().setDate(endDate.get(Calendar.YEAR),endDate.get(Calendar.MONTH)+3,day).build();
+                endDates[2] = new Calendar.Builder().setDate(endDates[1].get(Calendar.YEAR),endDates[1].get(Calendar.MONTH)+3,day).build();
+                endDates[3] = new Calendar.Builder().setDate(endDates[2].get(Calendar.YEAR),endDates[2].get(Calendar.MONTH)+3,day).build();
+
+                // fixed endDates[1] = endDates[2] = endDates[3] because endDate stayed the same
+
+                // endDates[2] = new Calendar.Builder().setDate(endDate.get(Calendar.YEAR),endDate.get(Calendar.MONTH)+3,day).build();
+                // endDates[3] = new Calendar.Builder().setDate(endDate.get(Calendar.YEAR),endDate.get(Calendar.MONTH)+3,day).build();
             }
         }
     }
 
     public Calendar[] getEndDates() {
         return endDates;
+    }
+    public String getStartDate(){
+        return new SimpleDateFormat("yyyy-MM-dd").format(startDate.getTime());
     }
 }

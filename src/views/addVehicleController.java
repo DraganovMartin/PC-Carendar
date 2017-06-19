@@ -6,7 +6,6 @@ package views;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -16,6 +15,8 @@ import javafx.stage.Stage;
 import model.Stickers.*;
 import model.UserManager;
 import model.Vehicle.Car;
+import model.Vehicle.Motorcycle;
+import model.Vehicle.Vehicle;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,13 +24,23 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDate;
 
-public class addCarController {
+public class addVehicleController {
     private UserManager userManager = null;
-    private Car vehicle;
+    private Vehicle vehicle;
+    private String extra;
 
-    public addCarController(){
+    public addVehicleController(){
         userManager = UserManager.getInstance();
-        vehicle = new Car();
+    }
+
+    @FXML
+    public void initialize(){
+        if(extra != null){
+            if (extra.equals("car"))
+                vehicle = new Car();
+            else
+                vehicle = new Motorcycle();
+        }
     }
 
     @FXML
@@ -86,6 +97,8 @@ public class addCarController {
     @FXML
     private DatePicker insDateStartDP;
 
+    private URL imageUrl;
+
     private IVignette setAndGetVignette(){
         IVignette vignette;
         if (vigTypeCombo.getValue() == null){
@@ -98,6 +111,7 @@ public class addCarController {
             vigStartDP.requestFocus();
             return null;
         }
+
         LocalDate date = vigStartDP.getValue();
         String vigType = vigTypeCombo.getValue();
         //System.out.println("Year : " + date.getYear() +"Month : " + (date.getMonth().getValue()-1) + "Day : " + date.getDayOfMonth());
@@ -119,7 +133,7 @@ public class addCarController {
 
     private Insurance setAndGetInsurance(){
         Insurance insurance = new Insurance();
-        if (insuranceTF.getText() == null){
+        if (insuranceTF.getText().equals("")){
             showDialogError("Please set insurance tax !");
             insuranceTF.requestFocus();
             return null;
@@ -158,80 +172,45 @@ public class addCarController {
         insurance.setStartDate(date.getYear(),date.getMonthValue()-1,date.getDayOfMonth());
 
 
-
         return insurance;
     }
 
     @FXML
     void saveCar(ActionEvent event) {
-        if(regNumTF.getText() == null){
+        // Changed because when getText() is empty it returns empty string instead of null
+        if (regNumTF.getText().equals("")) {
             showDialogError("Please enter vehicle's registration number !");
             regNumTF.requestFocus();
             return;
-        }
-        else {
+        } else {
             vehicle.setRegistrationPlate(regNumTF.getText());
         }
 
-        if (typeCombo.getValue()== null){
-            showDialogError("Please choose car type !");
-            typeCombo.requestFocus();
-            return;
-        }
-        else {
-            vehicle.setCarType(typeCombo.getValue());
-        }
-
-        if (modelTF.getText()== null){
+        if (modelTF.getText().equals("")) {
             showDialogError("Please enter car model !");
             modelTF.requestFocus();
             return;
-        }
-        else {
+        } else {
             vehicle.setModel(modelTF.getText());
         }
 
-        if (brandTF.getText()== null){
+        if (brandTF.getText().equals("")) {
             showDialogError("Please enter car brand !");
             brandTF.requestFocus();
             return;
-        }
-        else {
+        } else {
             vehicle.setBrand(brandTF.getText());
         }
 
-        if (engineCombo.getValue()== null){
-            showDialogError("Please choose engine type !");
-            engineCombo.requestFocus();
-            return;
-        }
-        else {
-            vehicle.setEngineType(engineCombo.getValue());
-        }
-
-        if (yearTF.getText()== null){
+        if (yearTF.getText().equals("")) {
             showDialogError("Please enter production year !");
             yearTF.requestFocus();
             return;
-        }
-        else {
+        } else {
             vehicle.setProductionYear(Integer.parseInt(yearTF.getText()));
         }
 
-        if (rangeTF.getText()== null){
-            showDialogError("Please enter how many km's vehicle travelled !");
-            rangeTF.requestFocus();
-            return;
-        }
-        else {
-            vehicle.setKmRange(rangeTF.getText());
-        }
-
-        if (setAndGetVignette() != null) {
-            vehicle.setVignette(setAndGetVignette());
-        }
-
-        if (oilChangeTF.getText()== null){
+        if (oilChangeTF.getText().equals("")){
             showDialogError("Please on what km's is next oil change !");
             oilChangeTF.requestFocus();
             return;
@@ -240,13 +219,13 @@ public class addCarController {
             vehicle.setNextOilChange(oilChangeTF.getText());
         }
 
-        if (taxTF.getText()== null){
+        if (taxTF.getText().equals("")){
             showDialogError("Please enter vehicle's tax !");
             taxTF.requestFocus();
             return;
         }
         else {
-            vehicle.setTax(Double.parseDouble(taxTF.getText()));
+            vehicle.setTaxAmount(Double.parseDouble(taxTF.getText()));
         }
 
         if (taxPayDP.getValue() == null){
@@ -259,8 +238,76 @@ public class addCarController {
             vehicle.getTax().setEndDate(date.getYear(),date.getMonthValue()-1,date.getDayOfMonth());
         }
 
-        vehicle.setInsurance(setAndGetInsurance());
-        userManager.addVehicle(vehicle);
+        if(imageUrl != null){
+            vehicle.setPathToImage(imageUrl.toString());
+        }
+
+        Insurance insurance = setAndGetInsurance();
+        if(insurance == null){ // No return was present and a Car was added even if insurance was empty
+            return;
+        }else {
+            vehicle.setInsurance(insurance);
+        }
+
+        // Can skip check for empty, because I added a default value in addCar.fxml
+        // To remove default value remove the <value> tag in the ComboBox in fxml
+        String vehicleType;
+        if (typeCombo.getValue() == null) {
+            showDialogError("Please choose car type !");
+            typeCombo.requestFocus();
+            return;
+        } else {
+            vehicleType = typeCombo.getValue();
+        }
+
+        String engineType;
+        if (engineCombo.getValue() == null) {
+            showDialogError("Please choose engine type !");
+            engineCombo.requestFocus();
+            return;
+        } else {
+           engineType = engineCombo.getValue();
+        }
+
+        String range;
+        if (rangeTF.getText().equals("")) {
+            showDialogError("Please enter how many km's vehicle travelled !");
+            rangeTF.requestFocus();
+            return;
+        } else {
+            range = rangeTF.getText();
+        }
+
+
+        // Initialize car/motorcycle parts of the object
+        if(extra.equals("car")){
+            IVignette vignette = setAndGetVignette();
+            if (vignette == null) {
+                return;
+            }
+
+            Car car = (Car) vehicle;
+
+            car.setCarType(vehicleType);
+            car.setEngineType(engineType);
+            car.setKmRange(range);
+            car.setVignette(vignette);
+
+            if(!userManager.addVehicle(car)){
+                showDialogError("Error while adding vehicle!");
+            }
+
+        }else{
+            Motorcycle motorcycle = (Motorcycle) vehicle;
+            motorcycle.setMotorcycleType(vehicleType);
+            motorcycle.setEngineType(engineType);
+            motorcycle.setKmRange(range);
+
+            if(!userManager.addVehicle(motorcycle)){
+                showDialogError("Error while adding vehicle!");
+            }
+        }
+
         cancelBtn.fire();
     }
 
@@ -286,13 +333,14 @@ public class addCarController {
         fileChooser.getExtensionFilters().
                 add(new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg"));
         File selectedFile = fileChooser.showOpenDialog(thisStage);
-        URL imageUrl = null;
+        imageUrl = null;
         try {
-            imageUrl = selectedFile.toURI().toURL();
+            if(selectedFile != null)
+                imageUrl = selectedFile.toURI().toURL();
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
-        if (selectedFile != null) {
+        if (imageUrl != null) {
             carImage.setImage(new Image(imageUrl.toString()));
         }
     }
@@ -303,5 +351,10 @@ public class addCarController {
         alert.setHeaderText("No data provided");
         alert.setContentText(text);
         alert.show();
+    }
+
+    public void setExtra(String extra){
+        System.out.println("Extra " + extra + " received!");
+        this.extra = extra;
     }
 }

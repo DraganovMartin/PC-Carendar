@@ -1,0 +1,20 @@
+Users
+----------------------
+insert into users(username,password,userAge) values("test","password",21);
+insert into users(username,password,userAge) values("dimcho","pass",21);
+
+Vehicles
+---------------------
+insert into vehicles(registration,ownerID,brand,model,type,body_type, engine_type, rangeKm, image_path, productionYear) values("AB122DW","test","sportsbike","fuck","Motorcycle","Cruiser","Gasoline","2000",null,2000);
+insert into vehicles(registration,ownerID,brand,model,type,body_type,engine_type,rangeKm,image_path,productionYear) values("AB12442","dimcho","sedan","shit","Car","Sedan","Gasoline","20000",null,2003);
+insert into vehicles(registration,ownerID,brand,model,type,body_type,engine_type,rangeKm,image_path,productionYear) values("AB124BA","dimcho","jeep","shit","Car","Jeep","Diesel","10000",null,2000);
+
+Taxes
+---------------------
+insert into taxes(vehicle_registration,type,dateFrom,dateTo,price) values("AB122DW","tax","2017-6-9","2017-7-9",120);
+insert into taxes(vehicle_registration,type,dateFrom,dateTo,price) values("AB124BA","annual-vignette","2015-1-12","2019-5-15",300);
+insert into taxes(vehicle_registration,type,dateFrom,dateTo,price) values("AB122DW","annual-vignette","2017-6-12","2018-1-1",110);
+
+Не съм добавял застраховка.
+
+select brand, model,vehicles.type,registration,ownerID, productionYear, taxes.type, dateFrom, dateTo, price from users Inner Join vehicles On (users.username = vehicles.ownerID) Left Join taxes On (registration=taxes.vehicle_registration) Where username="dimcho";

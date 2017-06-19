@@ -1,6 +1,7 @@
 package model.taxes;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 /**
@@ -31,8 +32,10 @@ public abstract class Tax implements Serializable {
         this.amount = amount;
     }
 
-    public Calendar getEndDate() {
-        return endDate;
+    public String getEndDate() {
+        SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+
+        return format1.format(endDate.getTime());
     }
 
     public double getAmount() {
