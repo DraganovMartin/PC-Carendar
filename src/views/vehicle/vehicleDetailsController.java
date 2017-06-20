@@ -14,12 +14,16 @@ import model.Vehicle.Vehicle;
 import model.taxes.Tax;
 import views.ViewWrapper;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 
 /**
  * Created by dimcho on 18.06.17.
  */
 public class vehicleDetailsController {
     private final ViewWrapper viewWrapper = ViewWrapper.getInstance();
+    private final Calendar now = Calendar.getInstance();
 
     private Vehicle vehicle;
 
@@ -54,9 +58,29 @@ public class vehicleDetailsController {
             }
 
             insurancePayCountLbl.setText(insuranceTypeCount);
-            insDateStartLbl.setText(insurance.getStartDate());
+            Calendar[] endDates = insurance.getEndDates();
 
-            // TODO add entry in gui for insurance end dates and show them
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            String endDate = null;
+            for (int i = 0; i < endDates.length; i++){
+                if(endDates[i].get(Calendar.YEAR) >= now.get(Calendar.YEAR)){
+                    if (endDates[i].get(Calendar.YEAR) > now.get(Calendar.YEAR)) {
+                        endDate = formatter.format(endDates[i].getTime());
+                        insPeriodLbl.setText(insurance.getStartDate() + " until " + endDate);
+                        break;
+                    } else if (endDates[i].get(Calendar.MONTH) > now.get(Calendar.MONTH)) {
+                        endDate = formatter.format(endDates[i].getTime());
+                        insPeriodLbl.setText(insurance.getStartDate() + " until " + endDate);
+                        break;
+                    }
+                }
+            }
+
+            if(endDate == null){
+                insPeriodLbl.setStyle("-fx-text-fill: red");
+                insPeriodLbl.setText("Insurance expired!");
+            }
+
         }
 
         // Initialize car/motorcycle parts of vehicle object
@@ -73,11 +97,16 @@ public class vehicleDetailsController {
             rangeLbl.setText(car.getKmRange());
 
             IVignette vignette = car.getVignette();
+            // The database.getVignetteForVehicle() method returns a vignette only if it is valid
             if(vignette != null) {
                 vigTypeLbl.setText(vignette.getType());
-                vigStartLbl.setText(vignette.getStartDate());
-                // TODO add entry gui for vignette end date and show it
+                vigPeriodLbl.setText(vignette.getStartDate() + " until " + vignette.getEndDate());
+
+            }else {
+                vigPeriodLbl.setStyle("-fx-text-fill: red");
+                vigPeriodLbl.setText("Vignette expired!");
             }
+
         }else{
             Motorcycle motorcycle = (Motorcycle) vehicle;
             if(motorcycle.getPathToImage() != null)
@@ -86,7 +115,7 @@ public class vehicleDetailsController {
                 image.setImage(new Image("/resources/motorcycleDefaultIcon.png"));
 
             vigTypeLbl.setText("No vignette for this vehicle");
-            vigStartLbl.setText("No vignette for this vehicle");
+            vigTypeLbl.setText("No vignette for this vehicle");
 
             typeLbl.setText(motorcycle.getMotorcycleType());
             engineLbl.setText(motorcycle.getEngineType());
@@ -126,7 +155,7 @@ public class vehicleDetailsController {
     private Label vigTypeLbl;
 
     @FXML
-    private Label vigStartLbl;
+    private Label vigPeriodLbl;
 
     @FXML
     private Label oilChangeLbl;
@@ -144,7 +173,7 @@ public class vehicleDetailsController {
     private Label insurancePayCountLbl;
 
     @FXML
-    private Label insDateStartLbl;
+    private Label insPeriodLbl;
 
     // Invoked by ViewWrapper
     public void setObjectExtra(Object extra){
