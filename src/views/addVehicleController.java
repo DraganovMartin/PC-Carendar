@@ -28,6 +28,7 @@ public class addVehicleController {
     private UserManager userManager = null;
     private Vehicle vehicle;
     private String extra;
+    private Object receivedObject;
 
     public addVehicleController(){
         userManager = UserManager.getInstance();
@@ -40,6 +41,23 @@ public class addVehicleController {
                 vehicle = new Car();
             else
                 vehicle = new Motorcycle();
+        }
+        if (receivedObject != null) {
+            vehicle = (Vehicle) receivedObject;
+            System.out.println("Yes it's a car");
+            carImage.setImage(new Image(vehicle.getPathToImage()));
+            regNumTF.setText(vehicle.getRegistrationPlate());
+            brandTF.setText(vehicle.getBrand());
+            modelTF.setText(vehicle.getModel());
+            oilChangeTF.setText(vehicle.getNextOilChange());
+            yearTF.setText(String.valueOf(vehicle.getProductionYear()));
+//            taxTF.setText(String.valueOf(vehicle.getTax().getAmount()));
+//            System.out.println(vehicle.getTax().getEndDate());
+            //taxPayDP.setValue(new LocalDate());
+
+            if (receivedObject instanceof Car) {
+                //String type = vehicle.getCarType();
+            }
         }
     }
 
@@ -353,8 +371,15 @@ public class addVehicleController {
         alert.show();
     }
 
+    // Called by ViewWrapper by reflection ...
     public void setExtra(String extra){
         System.out.println("Extra " + extra + " received!");
         this.extra = extra;
+    }
+
+    // Called by ViewWrapper by reflection ...
+    public void setObjectExtra(Object extra){
+        System.out.println("Extra " + extra + " received!");
+        this.receivedObject = extra;
     }
 }

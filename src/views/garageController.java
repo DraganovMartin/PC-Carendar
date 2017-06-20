@@ -56,10 +56,21 @@ public class garageController {
                 final ContextMenu contextMenu = new ContextMenu();
                 MenuItem editItem = new MenuItem("Edit");
                 editItem.setOnAction(e -> {
-                    Alert test = new Alert(Alert.AlertType.INFORMATION);
-                    test.setTitle("test");
-                    test.setContentText("Edit");
-                    test.showAndWait();
+                    try {
+                        Vehicle v = vehicleListView.getSelectionModel().getSelectedItem();
+                        viewWrapper.setStage((Stage) addVehicleBtn.getScene().getWindow());
+                        viewWrapper.putExtra(v);
+                        if(v instanceof Car) {
+                            viewWrapper.setRoot("addCar.fxml");
+                        }
+                        else viewWrapper.setRoot("addMotorcycle.fxml");
+                        viewWrapper.setSceneRoot(viewWrapper.getRoot());
+                        viewWrapper.setStageScene(viewWrapper.getScene());
+                        viewWrapper.getStage().show();
+                    }
+                    catch (IOException ex){
+                        ex.printStackTrace();
+                    }
                 });
                 MenuItem deleteItem = new MenuItem("Delete");
                 deleteItem.setOnAction(e -> {
