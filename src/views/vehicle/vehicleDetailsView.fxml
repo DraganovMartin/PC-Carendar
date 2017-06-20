@@ -58,12 +58,12 @@
                      </font>
                   </Label>
                   <Label fx:id="vigTypeLbl" layoutX="353.0" layoutY="240.0" AnchorPane.leftAnchor="353.0" AnchorPane.topAnchor="240.0" />
-                  <Label layoutX="853.0" layoutY="361.0" prefHeight="42.0" prefWidth="81.0" text="Vignette start date" wrapText="true" AnchorPane.rightAnchor="324.0" AnchorPane.topAnchor="221.0">
+                  <Label layoutX="853.0" layoutY="361.0" prefHeight="42.0" prefWidth="81.0" text="Vignette period" wrapText="true" AnchorPane.rightAnchor="324.0" AnchorPane.topAnchor="221.0">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="vigStartLbl" layoutX="962.0" layoutY="232.0" AnchorPane.leftAnchor="962.0" AnchorPane.topAnchor="232.0" />
+                  <Label fx:id="vigPeriodLbl" layoutX="962.0" layoutY="232.0" AnchorPane.leftAnchor="962.0" AnchorPane.topAnchor="232.0" />
                   <Label layoutX="269.0" layoutY="277.0" prefHeight="53.0" prefWidth="80.0" text="Next oil change " wrapText="true" AnchorPane.rightAnchor="893.0" AnchorPane.topAnchor="277.0">
                      <font>
                         <Font size="14.0" />
@@ -94,12 +94,12 @@
                      </font>
                   </Label>
                   <Label fx:id="insurancePayCountLbl" layoutX="410.0" layoutY="419.0" AnchorPane.leftAnchor="410.0" AnchorPane.topAnchor="419.0" />
-                  <Label layoutX="854.0" layoutY="683.0" prefHeight="65.0" prefWidth="88.0" text="Insurance date start" wrapText="true" AnchorPane.rightAnchor="316.0" AnchorPane.topAnchor="389.0">
+                  <Label layoutX="854.0" layoutY="683.0" prefHeight="65.0" prefWidth="88.0" text="Insurance period" wrapText="true" AnchorPane.rightAnchor="316.0" AnchorPane.topAnchor="389.0">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="insDateStartLbl" layoutX="954.0" layoutY="414.0" AnchorPane.leftAnchor="954.0" AnchorPane.topAnchor="414.0" />
+                  <Label fx:id="insPeriodLbl" layoutX="954.0" layoutY="414.0" AnchorPane.leftAnchor="954.0" AnchorPane.topAnchor="414.0" />
                </children>
             </AnchorPane>
          </content>
