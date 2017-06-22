@@ -93,7 +93,7 @@ public class loginController {
         @Override
         protected Void call() throws Exception {
             manager.loadLoggedUserVehicles();
-            // TODO if you want to load the vignettes with the vehicles remove the line below and change UserManager and Database code
+            // if you want to load the vignettes with the vehicles remove the line below and change UserManager and Database code
             manager.loadCarVignettes();
 
             return null;

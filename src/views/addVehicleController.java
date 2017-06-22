@@ -23,6 +23,9 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 
 public class addVehicleController {
     private UserManager userManager = null;
@@ -44,19 +47,117 @@ public class addVehicleController {
         }
         if (receivedObject != null) {
             vehicle = (Vehicle) receivedObject;
-            System.out.println("Yes it's a car");
-            carImage.setImage(new Image(vehicle.getPathToImage()));
+            if (vehicle.getPathToImage() != null) {
+                carImage.setImage(new Image(vehicle.getPathToImage()));
+            }
             regNumTF.setText(vehicle.getRegistrationPlate());
             brandTF.setText(vehicle.getBrand());
             modelTF.setText(vehicle.getModel());
-            oilChangeTF.setText(vehicle.getNextOilChange());
+            oilChangeTF.setText(String.valueOf(vehicle.getNextOilChange()));
             yearTF.setText(String.valueOf(vehicle.getProductionYear()));
-//            taxTF.setText(String.valueOf(vehicle.getTax().getAmount()));
-//            System.out.println(vehicle.getTax().getEndDate());
-            //taxPayDP.setValue(new LocalDate());
+            taxTF.setText(String.valueOf(vehicle.getTax().getAmount()));
+            System.out.println(vehicle.getTax().getEndDate());
+            String taxDate = vehicle.getTax().getEndDate();
+            String[] splittedDate = taxDate.split("-");
+            taxPayDP.setValue(LocalDate.of(Integer.parseInt(splittedDate[0]),Integer.parseInt(splittedDate[1]),Integer.parseInt(splittedDate[2])));
 
             if (receivedObject instanceof Car) {
-                //String type = vehicle.getCarType();
+                Car received = (Car) receivedObject;
+                IVignette vignette = received.getVignette();
+                if (vignette.isValid()) {
+                    // TODO : check why vignette date is wrong...
+                    System.out.println("Vignette is valid");
+                    vigTypeCombo.setValue(vignette.getType());
+                    String[] vignetteDates = received.getVignette().getStartDate().split("-");
+                    System.out.println(Arrays.toString(vignetteDates));
+                    vigStartDP.setValue(LocalDate.of(Integer.parseInt(vignetteDates[0]),Integer.parseInt(vignetteDates[1]),Integer.parseInt(vignetteDates[2])));
+                }
+                engineCombo.setValue(received.getEngineType());
+                String type = received.getCarType();
+                typeCombo.setValue(type);
+                rangeTF.setText(received.getKmRange());
+                Insurance insurance = received.getInsurance();
+                insuranceTF.setText(String.valueOf(insurance.getPrice()));
+                switch (insurance.getTypeCount()){
+                    case 1:
+                        insurancePayCountDP.setValue("ONE");
+                        break;
+                    case 2:
+                        insurancePayCountDP.setValue("TWO");
+                        break;
+                    case 3:
+                        insurancePayCountDP.setValue("THREE");
+                        break;
+                    case 4:
+                        insurancePayCountDP.setValue("FOUR");
+                        break;
+                }
+                Calendar[] insuranceDates = insurance.getEndDates();
+                Calendar check = Calendar.getInstance();
+                for (Calendar date : insuranceDates){
+                    if (date.compareTo(check) == 0 || date.compareTo(check) > 0){
+                        switch (insurance.getTypeCount()){
+                            case 1:
+                                insDateStartDP.setValue(LocalDate.of(date.get(Calendar.YEAR)-1,date.get(Calendar.MONTH),date.get(Calendar.DAY_OF_MONTH)));
+                                break;
+                            case 2:
+                                insDateStartDP.setValue(LocalDate.of(date.get(Calendar.YEAR),date.get(Calendar.MONTH)-5,date.get(Calendar.DAY_OF_MONTH)));
+                                break;
+                            case 3:
+                                insDateStartDP.setValue(LocalDate.of(date.get(Calendar.YEAR),date.get(Calendar.MONTH)-3,date.get(Calendar.DAY_OF_MONTH)));
+                                break;
+                            case 4:
+                                insDateStartDP.setValue(LocalDate.of(date.get(Calendar.YEAR),date.get(Calendar.MONTH)-2,date.get(Calendar.DAY_OF_MONTH)));
+                                break;
+                        }
+                        break;
+                    }
+                }
+            }
+
+            if (receivedObject instanceof Motorcycle) {
+                Motorcycle received = (Motorcycle) receivedObject;
+                engineCombo.setValue(received.getEngineType());
+                String type = received.getMotorcycleType();
+                typeCombo.setValue(type);
+                rangeTF.setText(received.getKmRange());
+                Insurance insurance = received.getInsurance();
+                insuranceTF.setText(String.valueOf(insurance.getPrice()));
+                switch (insurance.getTypeCount()){
+                    case 1:
+                        insurancePayCountDP.setValue("ONE");
+                        break;
+                    case 2:
+                        insurancePayCountDP.setValue("TWO");
+                        break;
+                    case 3:
+                        insurancePayCountDP.setValue("THREE");
+                        break;
+                    case 4:
+                        insurancePayCountDP.setValue("FOUR");
+                        break;
+                }
+                Calendar[] insuranceDates = insurance.getEndDates();
+                Calendar check = Calendar.getInstance();
+                for (Calendar date : insuranceDates){
+                    if (date.compareTo(check) == 0 || date.compareTo(check) > 0){
+                        switch (insurance.getTypeCount()){
+                            case 1:
+                                insDateStartDP.setValue(LocalDate.of(date.get(Calendar.YEAR)-1,date.get(Calendar.MONTH),date.get(Calendar.DAY_OF_MONTH)));
+                                break;
+                            case 2:
+                                insDateStartDP.setValue(LocalDate.of(date.get(Calendar.YEAR),date.get(Calendar.MONTH)-5,date.get(Calendar.DAY_OF_MONTH)));
+                                break;
+                            case 3:
+                                insDateStartDP.setValue(LocalDate.of(date.get(Calendar.YEAR),date.get(Calendar.MONTH)-3,date.get(Calendar.DAY_OF_MONTH)));
+                                break;
+                            case 4:
+                                insDateStartDP.setValue(LocalDate.of(date.get(Calendar.YEAR),date.get(Calendar.MONTH)-2,date.get(Calendar.DAY_OF_MONTH)));
+                                break;
+                        }
+                        break;
+                    }
+                }
             }
         }
     }
@@ -234,7 +335,7 @@ public class addVehicleController {
             return;
         }
         else {
-            vehicle.setNextOilChange(oilChangeTF.getText());
+            vehicle.setNextOilChange(Integer.parseInt(oilChangeTF.getText()));
         }
 
         if (taxTF.getText().equals("")){
@@ -296,15 +397,22 @@ public class addVehicleController {
             range = rangeTF.getText();
         }
 
-
+        // Avoiding null pointer exception
+        if (extra == null) extra = "";
         // Initialize car/motorcycle parts of the object
-        if(extra.equals("car")){
+        if(extra.equals("car") || receivedObject != null && receivedObject instanceof Car){
+
             IVignette vignette = setAndGetVignette();
             if (vignette == null) {
                 return;
             }
 
             Car car = (Car) vehicle;
+            try {
+                userManager.removeVehicle(car,false);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
             car.setCarType(vehicleType);
             car.setEngineType(engineType);
@@ -316,7 +424,15 @@ public class addVehicleController {
             }
 
         }else{
+
             Motorcycle motorcycle = (Motorcycle) vehicle;
+            if (receivedObject != null && receivedObject instanceof Motorcycle){
+                try {
+                    userManager.removeVehicle(motorcycle,false);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
             motorcycle.setMotorcycleType(vehicleType);
             motorcycle.setEngineType(engineType);
             motorcycle.setKmRange(range);

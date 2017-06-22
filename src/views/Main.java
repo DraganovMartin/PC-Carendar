@@ -9,6 +9,9 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import model.UserManager;
 import model.authentication.UsedUsernameException;
+import model.services.DateCheckerService;
+
+import java.util.Timer;
 
 public class Main extends Application {
     private ViewWrapper viewWrapper = ViewWrapper.getInstance();

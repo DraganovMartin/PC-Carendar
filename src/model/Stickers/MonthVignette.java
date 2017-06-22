@@ -45,7 +45,7 @@ public class MonthVignette implements IVignette {
     @Override
     public boolean isValid() {
         today.setTime(new Date());
-        if(today.before(endDate)){
+        if(today.before(endDate) || today.compareTo(endDate) == 0){
             return true;
         }
         else return false;
@@ -72,6 +72,6 @@ public class MonthVignette implements IVignette {
 
     @Override
     public String getType() {
-        return "Monthly";
+        return "Month";
     }
 }

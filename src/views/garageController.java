@@ -159,7 +159,6 @@ public class garageController {
             try {
                 // Go to details screen
                 viewWrapper.putExtra(v);
-                // TODO improve gui
                 viewWrapper.setRoot("vehicle/vehicleDetailsView.fxml");
                 viewWrapper.setSceneRoot(viewWrapper.getRoot());
                 viewWrapper.setStageScene(viewWrapper.getScene());

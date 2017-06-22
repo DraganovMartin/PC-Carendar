@@ -166,7 +166,7 @@ public class Database {
      */
     public List<Vehicle> getLoggedUserVehicles(String username){
         String sql = "select registration, brand, model,vehicles.type,body_type, engine_type," +
-                " rangeKm ,image_path, productionYear From vehicles Where ownerID = ?";
+                " rangeKm ,image_path, productionYear,nextOilChange From vehicles Where ownerID = ?";
 
         try {
             preparedStatement = connect.prepareStatement(sql);
@@ -185,14 +185,15 @@ public class Database {
                 String range = resultSet.getString(7);
                 String imagePath = resultSet.getString(8);
                 int productionYear = resultSet.getInt(9);
+                int nextOilChange = resultSet.getInt(10);
 
                 switch(resultSet.getString(4)){
                     case "Car" :
-                        vehicles.add(new Car(registration,brand,model,bodyType,engineType,range,imagePath,productionYear));
+                        vehicles.add(new Car(registration,brand,model,bodyType,engineType,range,imagePath,productionYear,nextOilChange));
                         break;
 
                     case "Motorcycle" :
-                        vehicles.add(new Motorcycle(registration,brand,model,bodyType,engineType,range,imagePath,productionYear));
+                        vehicles.add(new Motorcycle(registration,brand,model,bodyType,engineType,range,imagePath,productionYear,nextOilChange));
                         break;
 
                     default: throw new Exception("No such vehicle type! Please check the type in table vehicles.");
@@ -236,24 +237,15 @@ public class Database {
                 // Create the individual vignettes by model type
                 switch (resultSet.getString(1)) {
                     case "annual-vignette":
-                        vignette = new AnnualVignette(cDateFrom.get(Calendar.YEAR),
-                                cDateFrom.get(Calendar.MONTH),
-                                Calendar.DAY_OF_MONTH,
-                                price);
+                        vignette = new AnnualVignette(cDateFrom.get(Calendar.YEAR), cDateFrom.get(Calendar.MONTH), cDateFrom.get(Calendar.DAY_OF_MONTH), price);
                         break;
 
                     case "month-vignette":
-                        vignette = new MonthVignette(cDateFrom.get(Calendar.YEAR),
-                                cDateFrom.get(Calendar.MONTH),
-                                Calendar.DAY_OF_MONTH,
-                                price);
+                        vignette = new MonthVignette(cDateFrom.get(Calendar.YEAR), cDateFrom.get(Calendar.MONTH), cDateFrom.get(Calendar.DAY_OF_MONTH),price);
                         break;
 
                     case "week-vignette":
-                        vignette = new WeekVignette(cDateFrom.get(Calendar.YEAR),
-                                cDateFrom.get(Calendar.MONTH),
-                                Calendar.DAY_OF_MONTH,
-                                price);
+                        vignette = new WeekVignette(cDateFrom.get(Calendar.YEAR), cDateFrom.get(Calendar.MONTH), cDateFrom.get(Calendar.DAY_OF_MONTH), price);
                         break;
 
                     default:
@@ -276,7 +268,7 @@ public class Database {
      * @return the vehicle tax
      */
     public VehicleTax getTaxForVehicle(String registration){
-        String sql = "Select dateTo, price from taxes where vehicle_registration = ? And taxes.type Like 'tax' And dateTo >= NOW()";
+        String sql = "Select dateTo, price from taxes where vehicle_registration = ? And taxes.type = 'tax' ";
 
         try {
             preparedStatement = connect.prepareStatement(sql);
@@ -286,14 +278,18 @@ public class Database {
             VehicleTax tax = null;
 
             if(resultSet.first()){
+                System.out.println("inside result of taxes");
                 tax = new VehicleTax();
 
                 tax.setAmount(resultSet.getDouble(2));
 
                 Calendar endDate = Calendar.getInstance();
                 endDate.setTime(resultSet.getDate(1));
-
-                tax.setEndDate(endDate.get(Calendar.YEAR),endDate.get(Calendar.MONTH),endDate.get(Calendar.DAY_OF_MONTH));
+                Calendar check = Calendar.getInstance();
+                if (endDate.after(check) || endDate.compareTo(check) == 0) {
+                    System.out.println(endDate.get(Calendar.DAY_OF_MONTH));
+                    tax.setEndDate(endDate.get(Calendar.YEAR), endDate.get(Calendar.MONTH), endDate.get(Calendar.DAY_OF_MONTH));
+                }
             }
 
             return tax;
@@ -392,7 +388,7 @@ public class Database {
      */
     public boolean addVehicle(String loggedUserName, Vehicle x) {
         // By default it should be the logged user !
-        String sql = "insert into vehicles(registration,ownerID,brand,model,type,body_type,engine_type,rangeKm,image_path,productionYear)" + "values(?,?,?,?,?,?,?,?,?,?)";
+        String sql = "insert into vehicles(registration,ownerID,brand,model,type,body_type,engine_type,rangeKm,image_path,productionYear,nextOilChange)" + "values(?,?,?,?,?,?,?,?,?,?,?)";
         try {
 
             preparedStatement = connect.prepareStatement(sql);
@@ -400,6 +396,7 @@ public class Database {
             preparedStatement.setString(2,loggedUserName);
             preparedStatement.setString(3,x.getBrand());
             preparedStatement.setString(4,x.getModel());
+            preparedStatement.setInt(11,x.getNextOilChange());
             if (x instanceof Car){
                 Car c = (Car) x;
 
@@ -426,12 +423,14 @@ public class Database {
                 // Add tax as well
                 if(!addTaxesByVehicle(x.getRegistrationPlate(), x.getTax())){
                     // TODO maybe return false and show error popup inside addCar/Motorcycle controller
+                    System.out.println("Tax not added !");
                     Logger.getGlobal().log(Level.SEVERE, "Error adding tax to db!");
                 }
 
                 // Add insurance as well
                 if(!addInsuranceForVehicle(x.getRegistrationPlate(),x.getInsurance())){
                     // TODO maybe return false and show error popup inside addCar/Motorcycle controller
+                    System.out.println("Insurance not added");
                     Logger.getGlobal().log(Level.SEVERE, "Error adding insurance to db!");
                 }
 
@@ -472,10 +471,10 @@ public class Database {
                 case "Annual":
                     preparedStatement.setString(2,"annual-vignette");
                     break;
-                case "Monthly":
+                case "Month":
                     preparedStatement.setString(2,"month-vignette");
                     break;
-                case "Weekly":
+                case "Week":
                     preparedStatement.setString(2,"week-vignette");
                     break;
 
@@ -520,14 +519,14 @@ public class Database {
     private boolean addTaxesByVehicle(String registration, Tax tax){
         String sql = "Insert into taxes(vehicle_registration, type, dateFrom,dateTo, price) values(?,?,?,?,?)";
 
-        String dateFrom = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
+        //String dateFrom = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
 
         try {
             preparedStatement = connect.prepareStatement(sql);
 
             preparedStatement.setString(1,registration);
             preparedStatement.setString(2,"tax");
-            preparedStatement.setString(3,dateFrom);
+            preparedStatement.setString(3,tax.getEndDate());
             preparedStatement.setString(4,tax.getEndDate());
             preparedStatement.setDouble(5,tax.getAmount());
 
@@ -560,6 +559,8 @@ public class Database {
             // Ignore end date because it is calculated inside insurance
             preparedStatement.setString(4,"2017-1-1");
             preparedStatement.setDouble(5,insurance.getPrice());
+
+            // TODO : check bug when editing not creating ... parameter 2 no value specified ...
 
             preparedStatement.executeUpdate();
 

@@ -109,5 +109,7 @@ public class ViewWrapper {
         loader.setLocation(null);
         loader.setController(null);
         loader.setRoot(null);
+        extra = null;
+        extraObject = null;
     }
 }

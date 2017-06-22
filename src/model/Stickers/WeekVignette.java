@@ -11,7 +11,6 @@ import java.util.Date;
 public class WeekVignette implements IVignette {
     private Calendar startDate = Calendar.getInstance();
     private Calendar endDate = Calendar.getInstance();
-    private Calendar today = Calendar.getInstance();
     private double price;
 
     public WeekVignette(){}
@@ -44,8 +43,9 @@ public class WeekVignette implements IVignette {
 
     @Override
     public boolean isValid() {
-        today.setTime(new Date());
-        if(today.before(endDate)){
+        //today.setTime(new Date());
+        Calendar today = Calendar.getInstance();
+        if(today.before(endDate) || today.compareTo(endDate) == 0){
             return true;
         }
         else return false;
@@ -72,6 +72,6 @@ public class WeekVignette implements IVignette {
 
     @Override
     public String getType() {
-        return "Weekly";
+        return "Week";
     }
 }

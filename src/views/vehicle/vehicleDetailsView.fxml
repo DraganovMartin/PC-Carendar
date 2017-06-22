@@ -81,7 +81,7 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="taxPayLbl" layoutX="371.0" layoutY="359.0" AnchorPane.leftAnchor="371.0" AnchorPane.topAnchor="359.0" />
+                  <Label fx:id="taxPayDate" layoutX="371.0" layoutY="359.0" AnchorPane.leftAnchor="371.0" AnchorPane.topAnchor="359.0" />
                   <Label layoutX="852.0" layoutY="576.0" prefHeight="60.0" prefWidth="87.0" text="Insurance amount " wrapText="true" AnchorPane.rightAnchor="319.0" AnchorPane.topAnchor="333.0">
                      <font>
                         <Font size="14.0" />

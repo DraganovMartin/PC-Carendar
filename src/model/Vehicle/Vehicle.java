@@ -19,7 +19,7 @@ public abstract class Vehicle implements Serializable,Comparable<Vehicle> {
     private String pathToImage;
     private Insurance insurance;
     private VehicleTax tax;
-    private String nextOilChange;
+    private int nextOilChange;
     private static int id=0;
     private int myId;
 
@@ -29,13 +29,14 @@ public abstract class Vehicle implements Serializable,Comparable<Vehicle> {
         tax = new VehicleTax();
     }
 
-    public Vehicle(String registrationPlate, String brand, String model,String pathToImage,int productionYear){
+    public Vehicle(String registrationPlate, String brand, String model,String pathToImage,int productionYear,int nextOilChange){
         this.registrationPlate = registrationPlate;
         this.brand = brand;
         this.model = model;
         this.pathToImage = pathToImage;
         this.productionYear = productionYear;
         this.myId = ++id;
+        this.nextOilChange = nextOilChange;
     }
 
     public String getBrand() {
@@ -125,11 +126,11 @@ public abstract class Vehicle implements Serializable,Comparable<Vehicle> {
         this.tax = tax;
     }
 
-    public String getNextOilChange() {
+    public int getNextOilChange() {
         return nextOilChange;
     }
 
-    public void setNextOilChange(String nextOilChange) {
+    public void setNextOilChange(int nextOilChange) {
         this.nextOilChange = nextOilChange;
     }
     @Override

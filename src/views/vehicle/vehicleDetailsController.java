@@ -36,13 +36,13 @@ public class vehicleDetailsController {
         brandLbl.setText(vehicle.getBrand());
         modelLbl.setText(vehicle.getModel());
         yearLbl.setText(String.valueOf(vehicle.getProductionYear()));
-        oilChangeLbl.setText(vehicle.getNextOilChange());
+        oilChangeLbl.setText(String.valueOf(vehicle.getNextOilChange()));
 
         // Sets tax data
         Tax tax = vehicle.getTax();
         if(tax != null) {
             taxLbl.setText(String.valueOf(tax.getAmount()));
-            taxPayLbl.setText(tax.getEndDate());
+            taxPayDate.setText(tax.getEndDate());
         }
 
         // Sets insurance data
@@ -107,6 +107,8 @@ public class vehicleDetailsController {
                 vigPeriodLbl.setText("Vignette expired!");
             }
 
+
+
         }else{
             Motorcycle motorcycle = (Motorcycle) vehicle;
             if(motorcycle.getPathToImage() != null)
@@ -164,7 +166,7 @@ public class vehicleDetailsController {
     private Label taxLbl;
 
     @FXML
-    private Label taxPayLbl;
+    private Label taxPayDate;
 
     @FXML
     private Label insuranceLbl;
