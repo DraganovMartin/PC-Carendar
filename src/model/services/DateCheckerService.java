@@ -1,9 +1,9 @@
 package model.services;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
+import model.UserManager;
+import model.Vehicle.Vehicle;
+
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -11,15 +11,17 @@ import java.util.concurrent.TimeUnit;
  */
 public class DateCheckerService extends TimerTask {
     private final Timer timer;
+    private ArrayList<Vehicle> vehicles;
+    private ArrayList<Calendar> dates;
     DateCheckerService(){
         super();
         timer = new Timer("DateChecker");
+        vehicles = new ArrayList<>();
+        dates = new ArrayList<>();
     }
     @Override
     public void run() {
-        while (true){
-
-        }
+        //UserManager.getInstance().get
     }
 
     /**
@@ -33,23 +35,41 @@ public class DateCheckerService extends TimerTask {
         // TODO : implement left out cases
         switch (repeatInfo.toLowerCase()){
             case "hour":
-                PM12.set(Calendar.HOUR_OF_DAY, interval);
+                PM12.set(Calendar.HOUR_OF_DAY, whatHour);
                 PM12.set(Calendar.SECOND, 0);
+                timer.schedule(this,PM12.getTime(),TimeUnit.MILLISECONDS.convert(interval, TimeUnit.HOURS));
                 break;
             case "day":
+                PM12.set(Calendar.HOUR_OF_DAY,whatHour);
+                PM12.set(Calendar.SECOND,0);
+                timer.schedule(this,PM12.getTime(),TimeUnit.MILLISECONDS.convert(interval, TimeUnit.DAYS));
                 break;
             case "week":
+                PM12.set(Calendar.HOUR_OF_DAY,whatHour);
+                PM12.set(Calendar.SECOND,0);
+                int weeks = interval * 7;
+                timer.schedule(this,PM12.getTime(),TimeUnit.MILLISECONDS.convert(weeks, TimeUnit.DAYS));
                 break;
             case "month":
+                PM12.set(Calendar.HOUR_OF_DAY,whatHour);
+                PM12.set(Calendar.SECOND,0);
+                // TODO : get days of month
+               // int month = interval * PM12.
+                timer.schedule(this,PM12.getTime(),TimeUnit.MILLISECONDS.convert(interval, TimeUnit.DAYS));
                 break;
             case "year":
+                PM12.set(Calendar.HOUR_OF_DAY,whatHour);
+                PM12.set(Calendar.SECOND,0);
+                //TODO : get days of week
+                timer.schedule(this,PM12.getTime(),TimeUnit.MILLISECONDS.convert(interval, TimeUnit.DAYS));
                 break;
 
                 default:
                     PM12.set(Calendar.HOUR_OF_DAY, 12);
                     PM12.set(Calendar.SECOND, 0);
+                    timer.schedule(this,PM12.getTime(),TimeUnit.MILLISECONDS.convert(12, TimeUnit.HOURS));
         }
 
-        timer.schedule(this,new Date(),TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS));
+
     }
 }
