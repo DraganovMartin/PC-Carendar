@@ -7,7 +7,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
-import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.scene.layout.AnchorPane;
@@ -92,10 +91,8 @@ public class loginController {
 
         @Override
         protected Void call() throws Exception {
-            manager.loadLoggedUserVehicles();
-            // if you want to load the vignettes with the vehicles remove the line below and change UserManager and Database code
-            manager.loadCarVignettes();
-
+            // Loads all vehicle data for the logged user
+            manager.loadVehiclesForUser(manager.getLoggedUser());
             return null;
         }
 

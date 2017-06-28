@@ -103,6 +103,9 @@ public class vehicleDetailsController {
                 vigPeriodLbl.setText(vignette.getStartDate() + " until " + vignette.getEndDate());
 
             }else {
+                vigTypeLbl.setStyle("-fx-text-fill: red");
+                vigTypeLbl.setText("None");
+
                 vigPeriodLbl.setStyle("-fx-text-fill: red");
                 vigPeriodLbl.setText("Vignette expired!");
             }
@@ -116,8 +119,10 @@ public class vehicleDetailsController {
             else
                 image.setImage(new Image("/resources/motorcycleDefaultIcon.png"));
 
+            vigTypeLbl.setStyle("-fx-text-fill: red");
             vigTypeLbl.setText("No vignette for this vehicle");
-            vigTypeLbl.setText("No vignette for this vehicle");
+            vigPeriodLbl.setStyle("-fx-text-fill: red");
+            vigPeriodLbl.setText("No vignette for this vehicle");
 
             typeLbl.setText(motorcycle.getMotorcycleType());
             engineLbl.setText(motorcycle.getEngineType());

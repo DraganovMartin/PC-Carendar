@@ -22,11 +22,14 @@ public class Main extends Application {
         primaryStage.setTitle("Carendar");
         primaryStage.setScene(new Scene(root,1280,800));
         primaryStage.show();
+
     }
 
 
     public static void main(String[] args) {
         launch(args);
+        DateCheckerService checkerService = new DateCheckerService();
+        checkerService.startService(18,1,"month");
     }
 
 

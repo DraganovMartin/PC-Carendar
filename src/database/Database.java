@@ -9,7 +9,6 @@ import model.taxes.Tax;
 import model.taxes.VehicleTax;
 
 import java.sql.*;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -363,6 +362,32 @@ public class Database {
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    /**
+     * Gets all users from db and adds them to the registeredUsers collection in the UserManager class.
+     */
+    public void getAndStoreAllUsers(){
+        // Get all registered users
+        String sql = "Select * from users";
+
+        UserManager manager = UserManager.getInstance();
+
+        try {
+            preparedStatement = connect.prepareStatement(sql);
+
+            resultSet = preparedStatement.executeQuery();
+
+            while(resultSet.next()){
+                 manager.addToRegisteredUsers(resultSet.getString(1),
+                        resultSet.getString(2),
+                        resultSet.getInt(3));
+
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
