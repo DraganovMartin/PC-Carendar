@@ -105,7 +105,7 @@
          </content>
       </ScrollPane>
       <!--<Button fx:id="cancelBtn" layoutX="515.0" layoutY="658.0" mnemonicParsing="false" onAction="#cancel" text="Cancel" AnchorPane.bottomAnchor="117.0" AnchorPane.rightAnchor="713.0" />-->
-      <Button fx:id="backBtn" layoutX="838.0" layoutY="658.0" mnemonicParsing="false" onAction="#goBack" text="Back" AnchorPane.bottomAnchor="117.0" AnchorPane.rightAnchor="413.0" />
+      <Button fx:id="backBtn" layoutX="838.0" layoutY="658.0" mnemonicParsing="false" onAction="#goBack" text="Back to garage" AnchorPane.bottomAnchor="117.0" AnchorPane.rightAnchor="413.0" />
       <VBox alignment="TOP_CENTER" layoutX="392.0" layoutY="13.0" prefHeight="183.0" prefWidth="455.0" spacing="15.0" AnchorPane.bottomAnchor="604.0" AnchorPane.leftAnchor="392.0" AnchorPane.topAnchor="13.0">
          <children>
             <ImageView fx:id="image" fitHeight="139.0" fitWidth="115.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">

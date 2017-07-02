@@ -64,7 +64,9 @@ public class addVehicleController {
             if (receivedObject instanceof Car) {
                 Car received = (Car) receivedObject;
                 IVignette vignette = received.getVignette();
-                if (vignette.isValid()) {
+                // The db returns null if vignette is invalid for now
+                // Couldn't find bug, help
+                if (vignette != null) {
                     // TODO : check why vignette date is wrong...
                     System.out.println("Vignette is valid");
                     vigTypeCombo.setValue(vignette.getType());
@@ -76,41 +78,44 @@ public class addVehicleController {
                 String type = received.getCarType();
                 typeCombo.setValue(type);
                 rangeTF.setText(received.getKmRange());
+
                 Insurance insurance = received.getInsurance();
-                insuranceTF.setText(String.valueOf(insurance.getPrice()));
-                switch (insurance.getTypeCount()){
-                    case 1:
-                        insurancePayCountDP.setValue("ONE");
-                        break;
-                    case 2:
-                        insurancePayCountDP.setValue("TWO");
-                        break;
-                    case 3:
-                        insurancePayCountDP.setValue("THREE");
-                        break;
-                    case 4:
-                        insurancePayCountDP.setValue("FOUR");
-                        break;
-                }
-                Calendar[] insuranceDates = insurance.getEndDates();
-                Calendar check = Calendar.getInstance();
-                for (Calendar date : insuranceDates){
-                    if (date.compareTo(check) == 0 || date.compareTo(check) > 0){
-                        switch (insurance.getTypeCount()){
-                            case 1:
-                                insDateStartDP.setValue(LocalDate.of(date.get(Calendar.YEAR)-1,date.get(Calendar.MONTH),date.get(Calendar.DAY_OF_MONTH)));
-                                break;
-                            case 2:
-                                insDateStartDP.setValue(LocalDate.of(date.get(Calendar.YEAR),date.get(Calendar.MONTH)-5,date.get(Calendar.DAY_OF_MONTH)));
-                                break;
-                            case 3:
-                                insDateStartDP.setValue(LocalDate.of(date.get(Calendar.YEAR),date.get(Calendar.MONTH)-3,date.get(Calendar.DAY_OF_MONTH)));
-                                break;
-                            case 4:
-                                insDateStartDP.setValue(LocalDate.of(date.get(Calendar.YEAR),date.get(Calendar.MONTH)-2,date.get(Calendar.DAY_OF_MONTH)));
-                                break;
+                if(insurance.isValid()) {
+                    insuranceTF.setText(String.valueOf(insurance.getPrice()));
+                    switch (insurance.getTypeCount()) {
+                        case 1:
+                            insurancePayCountDP.setValue("ONE");
+                            break;
+                        case 2:
+                            insurancePayCountDP.setValue("TWO");
+                            break;
+                        case 3:
+                            insurancePayCountDP.setValue("THREE");
+                            break;
+                        case 4:
+                            insurancePayCountDP.setValue("FOUR");
+                            break;
+                    }
+                    Calendar[] insuranceDates = insurance.getEndDates();
+                    Calendar check = Calendar.getInstance();
+                    for (Calendar date : insuranceDates) {
+                        if (date.compareTo(check) == 0 || date.compareTo(check) > 0) {
+                            switch (insurance.getTypeCount()) {
+                                case 1:
+                                    insDateStartDP.setValue(LocalDate.of(date.get(Calendar.YEAR) - 1, date.get(Calendar.MONTH), date.get(Calendar.DAY_OF_MONTH)));
+                                    break;
+                                case 2:
+                                    insDateStartDP.setValue(LocalDate.of(date.get(Calendar.YEAR), date.get(Calendar.MONTH) - 5, date.get(Calendar.DAY_OF_MONTH)));
+                                    break;
+                                case 3:
+                                    insDateStartDP.setValue(LocalDate.of(date.get(Calendar.YEAR), date.get(Calendar.MONTH) - 3, date.get(Calendar.DAY_OF_MONTH)));
+                                    break;
+                                case 4:
+                                    insDateStartDP.setValue(LocalDate.of(date.get(Calendar.YEAR), date.get(Calendar.MONTH) - 2, date.get(Calendar.DAY_OF_MONTH)));
+                                    break;
+                            }
+                            break;
                         }
-                        break;
                     }
                 }
             }
@@ -122,40 +127,44 @@ public class addVehicleController {
                 typeCombo.setValue(type);
                 rangeTF.setText(received.getKmRange());
                 Insurance insurance = received.getInsurance();
-                insuranceTF.setText(String.valueOf(insurance.getPrice()));
-                switch (insurance.getTypeCount()){
-                    case 1:
-                        insurancePayCountDP.setValue("ONE");
-                        break;
-                    case 2:
-                        insurancePayCountDP.setValue("TWO");
-                        break;
-                    case 3:
-                        insurancePayCountDP.setValue("THREE");
-                        break;
-                    case 4:
-                        insurancePayCountDP.setValue("FOUR");
-                        break;
-                }
-                Calendar[] insuranceDates = insurance.getEndDates();
-                Calendar check = Calendar.getInstance();
-                for (Calendar date : insuranceDates){
-                    if (date.compareTo(check) == 0 || date.compareTo(check) > 0){
-                        switch (insurance.getTypeCount()){
-                            case 1:
-                                insDateStartDP.setValue(LocalDate.of(date.get(Calendar.YEAR)-1,date.get(Calendar.MONTH),date.get(Calendar.DAY_OF_MONTH)));
-                                break;
-                            case 2:
-                                insDateStartDP.setValue(LocalDate.of(date.get(Calendar.YEAR),date.get(Calendar.MONTH)-5,date.get(Calendar.DAY_OF_MONTH)));
-                                break;
-                            case 3:
-                                insDateStartDP.setValue(LocalDate.of(date.get(Calendar.YEAR),date.get(Calendar.MONTH)-3,date.get(Calendar.DAY_OF_MONTH)));
-                                break;
-                            case 4:
-                                insDateStartDP.setValue(LocalDate.of(date.get(Calendar.YEAR),date.get(Calendar.MONTH)-2,date.get(Calendar.DAY_OF_MONTH)));
-                                break;
+
+                if(insurance.isValid()) {
+                    insuranceTF.setText(String.valueOf(insurance.getPrice()));
+                    switch (insurance.getTypeCount()){
+                        case 1:
+                            insurancePayCountDP.setValue("ONE");
+                            break;
+                        case 2:
+                            insurancePayCountDP.setValue("TWO");
+                            break;
+                        case 3:
+                            insurancePayCountDP.setValue("THREE");
+                            break;
+                        case 4:
+                            insurancePayCountDP.setValue("FOUR");
+                            break;
+                    }
+
+                    Calendar[] insuranceDates = insurance.getEndDates();
+                    Calendar check = Calendar.getInstance();
+                    for (Calendar date : insuranceDates) {
+                        if (date.compareTo(check) == 0 || date.compareTo(check) > 0) {
+                            switch (insurance.getTypeCount()) {
+                                case 1:
+                                    insDateStartDP.setValue(LocalDate.of(date.get(Calendar.YEAR) - 1, date.get(Calendar.MONTH), date.get(Calendar.DAY_OF_MONTH)));
+                                    break;
+                                case 2:
+                                    insDateStartDP.setValue(LocalDate.of(date.get(Calendar.YEAR), date.get(Calendar.MONTH) - 5, date.get(Calendar.DAY_OF_MONTH)));
+                                    break;
+                                case 3:
+                                    insDateStartDP.setValue(LocalDate.of(date.get(Calendar.YEAR), date.get(Calendar.MONTH) - 3, date.get(Calendar.DAY_OF_MONTH)));
+                                    break;
+                                case 4:
+                                    insDateStartDP.setValue(LocalDate.of(date.get(Calendar.YEAR), date.get(Calendar.MONTH) - 2, date.get(Calendar.DAY_OF_MONTH)));
+                                    break;
+                            }
+                            break;
                         }
-                        break;
                     }
                 }
             }

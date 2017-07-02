@@ -148,9 +148,9 @@ public class UserManager implements IUserAuthenticator,Serializable {
      * Loads vignettes, taxes and insurance as well.
      */
     public void loadVehiclesForUser(User user){
-       List<Vehicle> vehicles =  database.getLoggedUserVehicles(user.name);
+        List<Vehicle> vehicles =  database.getLoggedUserVehicles(user.name);
 
-       if(vehicles != null) {
+        if(vehicles != null) {
            for (Vehicle v : vehicles){
                // Load vignettes
                if(v instanceof Car){
@@ -207,16 +207,53 @@ public class UserManager implements IUserAuthenticator,Serializable {
             throw new Exception("Error deleting vehicle from db!");
     }
 
+
     public String getLoggedUserName() {
-       return loggedUser.name;
+        if(loggedUser == null)
+            return null;
+
+        return loggedUser.name;
    }
 
     public User getLoggedUser() {
         return loggedUser;
     }
 
-    public List<Vehicle> getRegisteredUserVehicles(){
-        return new ArrayList<>(loggedUser.ownedVehicles);
+    /**
+     * Gets the owner of the specified vehicle.
+     *
+     * @param vehicle the vehicle for which to find the owner
+     * @return the owner's username
+     * @throws Exception when no registered users are stored in the UserManager or if no owner was found.
+     */
+    public String getVehicleOwnerUsername(Vehicle vehicle) throws Exception{
+        if(registeredUsers == null){
+            throw new Exception("No users stored in UserManager. Please call loadAllUsersAndVehicles() method first!");
+        }
+
+        for(User user : registeredUsers){
+            if(user.ownedVehicles.contains(vehicle)){
+                return user.name;
+            }
+        }
+
+        throw new Exception("WTF Exception: no vehicle owner found!");
+
+    }
+
+    public List<Vehicle> getRegisteredUserVehicles() {
+        if (registeredUsers != null && loggedUser.ownedVehicles.size() == 0){
+            // Use cached user from service
+            for (User user : registeredUsers) {
+                if (user.name.equals(loggedUser.name)) {
+                    return new ArrayList<>(user.ownedVehicles);
+                }
+            }
+        }else {
+            return new ArrayList<>(loggedUser.ownedVehicles);
+        }
+
+        return null;
     }
 
 
@@ -225,6 +262,9 @@ public class UserManager implements IUserAuthenticator,Serializable {
      *  setting "loggedUser" to null !!
      */
     public boolean userLogout(){
+        if(loggedUser == null)
+            return true;
+
         if(!database.logOutUser(loggedUser.name))
             return false;
 
