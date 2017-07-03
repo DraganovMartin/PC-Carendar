@@ -38,6 +38,10 @@ public abstract class Tax implements Serializable {
         return format1.format(endDate.getTime());
     }
 
+    public Calendar getEndDateAsCalendarObject(){
+        return endDate;
+    }
+
     public double getAmount() {
         return amount;
     }

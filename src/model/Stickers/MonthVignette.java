@@ -71,6 +71,11 @@ public class MonthVignette implements IVignette {
     }
 
     @Override
+    public Calendar getEndDateAsCalender(){
+        return endDate;
+    }
+
+    @Override
     public String getType() {
         return "Month";
     }

@@ -47,7 +47,8 @@ public class vehicleDetailsController {
 
         // Sets insurance data
         Insurance insurance = vehicle.getInsurance();
-        if(insurance != null) {
+        Calendar activeEndDate = insurance.getActiveEndDate();
+        if(activeEndDate != null){
             insuranceLbl.setText(String.valueOf(insurance.getPrice()));
             String insuranceTypeCount = "N/A";
             switch (insurance.getTypeCount()){
@@ -58,30 +59,18 @@ public class vehicleDetailsController {
             }
 
             insurancePayCountLbl.setText(insuranceTypeCount);
-            Calendar[] endDates = insurance.getEndDates();
-
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-            String endDate = null;
-            for (int i = 0; i < endDates.length; i++){
-                if(endDates[i].get(Calendar.YEAR) >= now.get(Calendar.YEAR)){
-                    if (endDates[i].get(Calendar.YEAR) > now.get(Calendar.YEAR)) {
-                        endDate = formatter.format(endDates[i].getTime());
-                        insPeriodLbl.setText(insurance.getStartDate() + " until " + endDate);
-                        break;
-                    } else if (endDates[i].get(Calendar.MONTH) > now.get(Calendar.MONTH)) {
-                        endDate = formatter.format(endDates[i].getTime());
-                        insPeriodLbl.setText(insurance.getStartDate() + " until " + endDate);
-                        break;
-                    }
-                }
-            }
+            insPeriodLbl.setText(insurance.getStartDate() + " - " + formatter.format(activeEndDate.getTime()));
 
-            if(endDate == null){
-                insPeriodLbl.setStyle("-fx-text-fill: red");
-                insPeriodLbl.setText("Insurance expired!");
-            }
-
+        } else {
+            insuranceLbl.setStyle("-fx-text-fill: red");
+            insuranceLbl.setText("Not set");
+            insurancePayCountLbl.setStyle("-fx-text-fill: red");
+            insurancePayCountLbl.setText("None");
+            insPeriodLbl.setStyle("-fx-text-fill: red");
+            insPeriodLbl.setText("Insurance expired!");
         }
+
 
         // Initialize car/motorcycle parts of vehicle object
         if(vehicle instanceof Car){
@@ -103,6 +92,9 @@ public class vehicleDetailsController {
                 vigPeriodLbl.setText(vignette.getStartDate() + " until " + vignette.getEndDate());
 
             }else {
+                vigTypeLbl.setStyle("-fx-text-fill: red");
+                vigTypeLbl.setText("None");
+
                 vigPeriodLbl.setStyle("-fx-text-fill: red");
                 vigPeriodLbl.setText("Vignette expired!");
             }
@@ -116,8 +108,10 @@ public class vehicleDetailsController {
             else
                 image.setImage(new Image("/resources/motorcycleDefaultIcon.png"));
 
+            vigTypeLbl.setStyle("-fx-text-fill: red");
             vigTypeLbl.setText("No vignette for this vehicle");
-            vigTypeLbl.setText("No vignette for this vehicle");
+            vigPeriodLbl.setStyle("-fx-text-fill: red");
+            vigPeriodLbl.setText("No vignette for this vehicle");
 
             typeLbl.setText(motorcycle.getMotorcycleType());
             engineLbl.setText(motorcycle.getEngineType());

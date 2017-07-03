@@ -7,11 +7,11 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
-import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.scene.layout.AnchorPane;
 import model.UserManager;
+import model.Vehicle.Vehicle;
 
 import java.io.IOException;
 
@@ -22,6 +22,9 @@ public class loginController {
     private final UserManager manager = UserManager.getInstance();
     private final ViewWrapper viewWrapper = ViewWrapper.getInstance();
     private final LoaderTask loaderTask = new LoaderTask();
+    private Vehicle vehicleExtra;
+    private String stringExtra;
+    private boolean hasExtraFromService = false;
 
     @FXML
     private TextField usernameText;
@@ -39,12 +42,20 @@ public class loginController {
 
     @FXML
     public void initialize() {
-        // TODO : what the fuck is the problem with constructors !!!
-        if(manager.setLoggedUserFromInitialLoading()){
+        // Set a non transparent background to the loginPane
+        loginPane.setStyle("-fx-background-color: f4f4f4;");
+
+        // The extras are passed by the DateCheckerService
+        if(stringExtra != null && vehicleExtra != null){
+            hasExtraFromService = true;
+            usernameText.setText(stringExtra);
+            usernameText.setDisable(true);
+            loginPane.setVisible(true);
+
+        } else if(manager.setLoggedUserFromInitialLoading()) {  // Checks if a direct login is possible
             new Thread(loaderTask).start();
-        }else{
-            // Show progress pane
-            loginPane.setStyle("-fx-background-color: f4f4f4;");
+        } else {
+            // Show login pane
             loginPane.setVisible(true);
         }
     }
@@ -62,8 +73,22 @@ public class loginController {
 
         if(!username.isEmpty() && !pass.isEmpty()){
            if(manager.loginUser(username,pass)){
-               // Run task
-               new Thread(loaderTask).start();
+               if(!hasExtraFromService){
+                   // Run task
+                   new Thread(loaderTask).start();
+               }else {
+                   // Show vehicle details
+                   try {
+                       viewWrapper.setStage((Stage)loginBtn.getScene().getWindow());
+                       viewWrapper.putExtra(vehicleExtra);
+                       viewWrapper.setRoot("vehicle/vehicleDetailsView.fxml");
+                       viewWrapper.setSceneRoot(viewWrapper.getRoot());
+                       viewWrapper.setStageScene(viewWrapper.getScene());
+                       viewWrapper.getStage().show();
+                   } catch (IOException e) {
+                       e.printStackTrace();
+                   }
+               }
 
            }else{
                alert.setTitle("Login error !!!");
@@ -92,10 +117,9 @@ public class loginController {
 
         @Override
         protected Void call() throws Exception {
-            manager.loadLoggedUserVehicles();
-            // if you want to load the vignettes with the vehicles remove the line below and change UserManager and Database code
-            manager.loadCarVignettes();
 
+            // Loads all vehicle data for the logged user
+            manager.loadVehiclesForUser(manager.getLoggedUser());
             return null;
         }
 
@@ -124,5 +148,17 @@ public class loginController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    // Called by ViewWrapper by reflection ...
+    public void setObjectExtra(Object extra){
+        System.out.println("Object extra received");
+        vehicleExtra = (Vehicle) extra;
+    }
+
+    // Called by ViewWrapper by reflection ...
+    public void setExtra(String extra){
+        System.out.println("Extra " + extra + " received!");
+        stringExtra = extra;
     }
 }

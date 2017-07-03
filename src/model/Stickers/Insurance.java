@@ -43,6 +43,49 @@ public class Insurance implements Serializable{
         this.endDate=endDate;
     }
 
+    /**
+     * Check if the insurance is still valid
+     * @return true if the insurance is still valid false otherwise
+     */
+    public boolean isValid(){
+        Calendar lastDate = endDates[getTypeCount() - 1];
+        Calendar now = Calendar.getInstance();
+
+        if(lastDate != null){
+            if(now.before(lastDate) || lastDate.equals(now)){
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Gets the still active endDate from the specified period.
+     * The method also checks if the insurance is still valid.
+     *
+     * @return the active end date of the current period or null if the insurance expired
+     */
+    public Calendar getActiveEndDate(){
+        if(!isValid())
+            return null;
+
+        // Checks which is the active period
+        // If the getTypeCount is 1 the loop won't run
+        // Otherwise the loop will continue to check the dates until it reaches the last date.
+        // The last date will not be checked in the loop.
+        // It was already checked in the isValid() method so no need to check it again.
+        Calendar now = Calendar.getInstance();
+        for(int currentPeriod = 0; currentPeriod < getTypeCount() - 1; currentPeriod++){
+            if(now.before(endDates[currentPeriod])){
+                return endDates[currentPeriod];
+            }
+        }
+
+        // if the insurance is valid and non of the
+        return endDates[getTypeCount() - 1];
+    }
+
     public int getTypeCount() {
         return type;
     }
