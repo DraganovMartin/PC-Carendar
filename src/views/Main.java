@@ -26,7 +26,7 @@ public class Main extends Application {
         primaryStage.show();
 
         DateCheckerService checkerService = new DateCheckerService();
-        checkerService.startService(10,1,"hour");
+        checkerService.startService(20,1,"hour");
 
     }
 
