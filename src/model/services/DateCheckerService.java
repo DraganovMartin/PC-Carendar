@@ -191,6 +191,17 @@ public class DateCheckerService extends TimerTask {
         });
     }
 
+    private void closeOldNotificationIfStillOpen(){
+        ObservableList<Stage> availableStages = StageHelper.getStages();
+
+        for(Stage stage : availableStages){
+            if(stage.getTitle().equals("Tax info")){
+                Platform.runLater(stage::close);
+                break;
+            }
+        }
+    }
+
     /**
      * Opens the vehicleDetailsView when the button of an expired tax is clicked.
      * If the user who owns the vehicle is not logged in this method redirects the user to the login screen.
@@ -309,8 +320,12 @@ public class DateCheckerService extends TimerTask {
 
     @Override
     public void run() {
+        // Close old alert if still open
+        closeOldNotificationIfStillOpen();
         // Loads all users and vehicles in the UserManager
         manager.loadAllUsersAndVehicles();
+        // Clear the vehicles
+        vehicles.clear();
         // Gets all the vehicles from the UserManager
         vehicles.addAll(manager.getAllVehiclesOfAllUsers());
 
@@ -335,7 +350,7 @@ public class DateCheckerService extends TimerTask {
                 PM12.set(Calendar.HOUR_OF_DAY, whatHour);
                 PM12.set(Calendar.SECOND, 0);
                 PM12.set(Calendar.MINUTE, 0);
-                timer.schedule(this,PM12.getTime(),TimeUnit.MILLISECONDS.convert(interval,TimeUnit.HOURS));
+                timer.schedule(this,PM12.getTime(),TimeUnit.MILLISECONDS.convert(10,TimeUnit.MINUTES));
                 break;
             case "day":
                 PM12.set(Calendar.HOUR_OF_DAY,whatHour);

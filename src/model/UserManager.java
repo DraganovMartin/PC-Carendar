@@ -242,7 +242,7 @@ public class UserManager implements IUserAuthenticator,Serializable {
     }
 
     public List<Vehicle> getRegisteredUserVehicles() {
-        if (registeredUsers != null && loggedUser.ownedVehicles.size() == 0){
+        if (registeredUsers != null && loggedUser.ownedVehicles.size() <= 1){
             // Use cached user from service
             for (User user : registeredUsers) {
                 if (user.name.equals(loggedUser.name)) {
