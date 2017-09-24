@@ -47,7 +47,10 @@ public class vehicleDetailsController {
 
         // Sets insurance data
         Insurance insurance = vehicle.getInsurance();
-        Calendar activeEndDate = insurance.getActiveEndDate();
+        Calendar activeEndDate = null;
+        if (insurance != null) {
+            activeEndDate = insurance.getActiveEndDate();
+        }
         if(activeEndDate != null){
             insuranceLbl.setText(String.valueOf(insurance.getPrice()));
             String insuranceTypeCount = "N/A";

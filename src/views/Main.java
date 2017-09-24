@@ -10,23 +10,19 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import model.UserManager;
 import model.authentication.UsedUsernameException;
-import model.services.DateCheckerService;
 
 import java.util.Timer;
 
 public class Main extends Application {
-    private ViewWrapper viewWrapper = ViewWrapper.getInstance();
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Platform.setImplicitExit(false);
+        Platform.setImplicitExit(true);
         Parent root = FXMLLoader.load(getClass().getResource("login.fxml"));
         primaryStage.setTitle("Carendar");
-        primaryStage.setScene(new Scene(root,1280,800));
+        primaryStage.setScene(new Scene(root));
         primaryStage.show();
 
-        DateCheckerService checkerService = new DateCheckerService();
-        checkerService.startService(20,1,"hour");
 
     }
 

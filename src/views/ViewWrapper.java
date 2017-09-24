@@ -20,8 +20,8 @@ public class ViewWrapper {
     private FXMLLoader loader;
     private String extra = null;
     private Object extraObject = null;
-    private static final double SCREEN_WIDTH = 1280;
-    private static final double SCREEN_HEIGHT = 800;
+//    private static final double SCREEN_WIDTH = 1280;
+//    private static final double SCREEN_HEIGHT = 800;
 
     private static ViewWrapper viewWrapper = new ViewWrapper();
 
@@ -84,7 +84,7 @@ public class ViewWrapper {
     }
 
     public void setSceneRoot(Parent root) {
-        this.scene = new Scene(root,SCREEN_WIDTH,SCREEN_HEIGHT);
+        this.scene = new Scene(root);
     }
 
     public void setStageScene(Scene scene){

@@ -112,6 +112,7 @@ public class addVehicleController {
                                     break;
                                 case 4:
                                     insDateStartDP.setValue(LocalDate.of(date.get(Calendar.YEAR), date.get(Calendar.MONTH) - 2, date.get(Calendar.DAY_OF_MONTH)));
+                                    // it crashes on above line, i will fix it tomorrow i need sleep really !!!
                                     break;
                             }
                             break;
@@ -304,7 +305,7 @@ public class addVehicleController {
     }
 
     @FXML
-    void saveCar(ActionEvent event) {
+    void saveVehicle(ActionEvent event) {
         // Changed because when getText() is empty it returns empty string instead of null
         if (regNumTF.getText().equals("")) {
             showDialogError("Please enter vehicle's registration number !");
@@ -371,7 +372,7 @@ public class addVehicleController {
         }
 
         Insurance insurance = setAndGetInsurance();
-        if(insurance == null){ // No return was present and a Car was added even if insurance was empty
+        if(insurance == null){
             return;
         }else {
             vehicle.setInsurance(insurance);

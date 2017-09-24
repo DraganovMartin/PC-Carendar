@@ -9,8 +9,12 @@ import model.taxes.Tax;
 import model.taxes.VehicleTax;
 
 import java.sql.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,7 +36,7 @@ public class Database {
 
     private Database() {
         try {
-            connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/carendar","carendar","carendar");
+            connect = DriverManager.getConnection("jdbc:sqlite:D:\\Programming\\Databases\\Carendar sqlite\\Carendar.db");
             statement = connect.createStatement();
             System.out.println("Connection success");
         } catch (SQLException e) {
@@ -83,7 +87,7 @@ public class Database {
             preparedStatement.setString(1,username);
              resultSet = preparedStatement.executeQuery();
              while (resultSet.next()){
-                 System.out.println(resultSet.getString(1) + resultSet.getString(2) + resultSet.getString(3));
+                // System.out.println(resultSet.getString(1) + resultSet.getString(2) + resultSet.getString(3));
                  return false;
              }
              return true;
@@ -102,25 +106,38 @@ public class Database {
      */
     public int logInUser(String username, String pass){
         String sql = "select username,userAge,isLogged from users where username = ? AND password = ?";
-
+        int age = 0;
         try {
-            preparedStatement = connect.prepareStatement(sql,ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);
-            preparedStatement.setString(1,username);
-            preparedStatement.setString(2,pass);
+            preparedStatement = connect.prepareStatement(sql);
+            preparedStatement.setString(1, username);
+            preparedStatement.setString(2, pass);
             resultSet = preparedStatement.executeQuery();
 
-            if(!resultSet.first()){
+            if (!resultSet.next()) {
                 return -1;
             }
-            resultSet.updateInt(3,1);
-            resultSet.updateRow();
 
-            return resultSet.getInt(2);
-
-        }catch (SQLException e){
-            e.printStackTrace();
-            return -1;
+//            resultSet.updateInt(4, 1);
+//            resultSet.updateRow();
+            age = resultSet.getInt(3);
         }
+        catch (SQLException ex){
+            ex.printStackTrace();
+        }
+
+        // Added because of SQLite if using MySQL below lines must be commented and uncomment above lines
+            String updateStatus = "UPDATE users set isLogged = 1 where username = ?;";
+            int result=-1;
+        try {
+            preparedStatement = connect.prepareStatement(updateStatus);
+            preparedStatement.setString(1,username);
+           result = preparedStatement.executeUpdate();
+        } catch (SQLException e1) {
+            e1.printStackTrace();
+        }
+        System.out.println("Update result : " + result);
+
+        return age;
     }
 
     /**
@@ -215,7 +232,7 @@ public class Database {
      * @return the current active vignette
      */
     public IVignette getVignetteForVehicle(String registration){
-        String sql = "select taxes.type, dateFrom, price from taxes where vehicle_registration = ? And taxes.type Like '%vignette' And dateTo >= NOW()";
+        String sql = "select taxes.type, dateFrom, price from taxes where vehicle_registration = ? And taxes.type Like '%vignette' And dateTo >= date('now')";
 
         try {
             IVignette vignette = null;
@@ -225,9 +242,10 @@ public class Database {
             resultSet = preparedStatement.executeQuery();
 
             // Only one vignette is active per period
-            if(resultSet.first()) {
+            if(resultSet.next()) {
 
-                Date dateFrom = resultSet.getDate(2);
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                java.util.Date dateFrom = formatter.parse(resultSet.getString(2));
                 double price = resultSet.getDouble(3);
 
                 Calendar cDateFrom = Calendar.getInstance();
@@ -276,14 +294,16 @@ public class Database {
             resultSet = preparedStatement.executeQuery();
             VehicleTax tax = null;
 
-            if(resultSet.first()){
+            if(resultSet.next()){
                 System.out.println("inside result of taxes");
                 tax = new VehicleTax();
 
                 tax.setAmount(resultSet.getDouble(2));
 
                 Calendar endDate = Calendar.getInstance();
-                endDate.setTime(resultSet.getDate(1));
+                // Adding because of SQLite
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                endDate.setTime(formatter.parse(resultSet.getString(1)));
                 Calendar check = Calendar.getInstance();
                 if (endDate.after(check) || endDate.compareTo(check) == 0) {
                     System.out.println(endDate.get(Calendar.DAY_OF_MONTH));
@@ -296,7 +316,10 @@ public class Database {
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
+        return null;
     }
 
     /**
@@ -308,61 +331,57 @@ public class Database {
      * @return an Insurance object
      */
     public Insurance getInsuranceForVehicle(String registration){
-        // Gets the max dateFrom to filter out older and expired insurances
-        String sql = "select MAX(dateFrom) as dateFrom From taxes Where vehicle_registration = ? And type Like '%insurance'";
 
-        try {
-            preparedStatement = connect.prepareStatement(sql);
-            preparedStatement.setString(1,registration);
+            try {
+                String getInsuranceDataSql = "select type, price, dateFrom From taxes Where vehicle_registration = ? And type Like '%insurance' And dateFrom = (SELECT max(dateFrom) FROM taxes where type Like '%insurance');";
+                preparedStatement = connect.prepareStatement(getInsuranceDataSql);
 
-            resultSet = preparedStatement.executeQuery();
 
-            if(!resultSet.first()){
-                return null;
-            }
+                // Get all other insurance data
+                preparedStatement.setString(1, registration);
+                resultSet = preparedStatement.executeQuery();
 
-            String getInsuranceDataSql = "select type, price From taxes Where vehicle_registration = ? And type Like '%insurance' And dateFrom = ?";
-            preparedStatement = connect.prepareStatement(getInsuranceDataSql);
+//            if(!resultSet.next()) {
+//                return null;
+//            }
+                Insurance insurance = null;
+                if (resultSet.next()) {
+                    double insurancePrice = resultSet.getDouble(2);
+                    Insurance.Payments payments = null;
+                    switch (resultSet.getString(1)) {
+                        case "1-insurance":
+                            payments = Insurance.Payments.ONE;
+                            break;
+                        case "2-insurance":
+                            payments = Insurance.Payments.TWO;
+                            break;
+                        case "3-insurance":
+                            payments = Insurance.Payments.THREE;
+                            break;
+                        case "4-insurance":
+                            payments = Insurance.Payments.FOUR;
+                            break;
+                    }
 
-            // Get max date from result set
-            Date startDate = resultSet.getDate(1);
+                    insurance = new Insurance();
+                    insurance.setPrice(insurancePrice);
+                    insurance.setTypeCount(payments);
 
-            // Get all other insurance data
-            preparedStatement.setString(1,registration);
-            preparedStatement.setDate(2,startDate);
+                    Calendar endDate = Calendar.getInstance();
+                    String startingDate = resultSet.getString(3);
+                    String[] dates = startingDate.split("-");
+                    Calendar startDate = Calendar.getInstance();
+                    startDate.set(Integer.parseInt(dates[0]),Integer.parseInt(dates[1]),Integer.parseInt(dates[2]));
+                    endDate.setTime(startDate.getTime());
+                    insurance.setStartDate(endDate.get(Calendar.YEAR), endDate.get(Calendar.MONTH), endDate.get(Calendar.DAY_OF_MONTH));
+                }
 
-            resultSet = preparedStatement.executeQuery();
-
-            if(!resultSet.first()) {
-                return null;
-            }
-
-            double insurancePrice = resultSet.getDouble(2);
-            Insurance.Payments payments  = null;
-            switch (resultSet.getString(1)){
-                case "1-insurance": payments = Insurance.Payments.ONE; break;
-                case "2-insurance": payments = Insurance.Payments.TWO; break;
-                case "3-insurance": payments = Insurance.Payments.THREE; break;
-                case "4-insurance": payments = Insurance.Payments.FOUR; break;
-            }
-
-            Insurance insurance = new Insurance();
-            insurance.setPrice(insurancePrice);
-            insurance.setTypeCount(payments);
-
-            Calendar endDate = Calendar.getInstance();
-            endDate.setTime(startDate);
-            insurance.setStartDate(endDate.get(Calendar.YEAR),endDate.get(Calendar.MONTH),endDate.get(Calendar.DAY_OF_MONTH));
-
-            // TODO discuss
-            // Insurance may have expired
-            // Could check validity here
-            return insurance;
-
+                // TODO discuss Insurance may have expired, could check validity here - the external service will be monitoring everything important with data. This app serves only as a client :)
+                return insurance;
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
-        }
+            }
     }
 
     /**
@@ -397,7 +416,7 @@ public class Database {
     public String[] findLoggedUser() throws SQLException {
         String sql = "select username,password,userAge from users where isLogged = 1";
         resultSet = statement.executeQuery(sql);
-        if (resultSet.first()) {
+        if (resultSet.next()) {
             return new String[]{resultSet.getString(1),resultSet.getString(2),resultSet.getString(3)};
         }
         else return null;
@@ -626,7 +645,7 @@ public class Database {
      * @return true if operation wa successful false otherwise
      */
     public boolean removeVehicle(String registration){
-        String sql = "Delete From vehicles Where registration = ? limit 1";
+        String sql = "Delete From vehicles Where registration = ?";
 
         try {
             // First delete all the taxes for the vehicle

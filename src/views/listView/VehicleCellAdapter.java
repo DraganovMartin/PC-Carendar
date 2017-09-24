@@ -27,7 +27,7 @@ public class VehicleCellAdapter extends ListCell<Vehicle> {
             if(v instanceof Car){
                 Car car = (Car) v;
 
-                itemController.setTitle(car.getCarType() + " " + car.getModel());
+                itemController.setTitle(car.getBrand() + " " + car.getModel());
                 itemController.setProductionYear(car.getProductionYear());
                 itemController.setRange(car.getKmRange());
 
@@ -40,7 +40,7 @@ public class VehicleCellAdapter extends ListCell<Vehicle> {
             }else{
                 Motorcycle motorcycle = (Motorcycle) v;
 
-                itemController.setTitle(motorcycle.getMotorcycleType() + " " + motorcycle.getModel());
+                itemController.setTitle(motorcycle.getBrand() + " " + motorcycle.getModel());
                 itemController.setProductionYear(motorcycle.getProductionYear());
                 itemController.setRange(motorcycle.getKmRange());
 

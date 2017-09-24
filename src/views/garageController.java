@@ -30,6 +30,7 @@ public class garageController {
 
         // Gets vehicles from UserManager
         vehicles = userManager.getRegisteredUserVehicles();
+        //System.out.println("size of vehicles : " + vehicles.size());
     }
     @FXML
     private Label usernameLabel;

@@ -149,7 +149,7 @@ public class UserManager implements IUserAuthenticator,Serializable {
      */
     public void loadVehiclesForUser(User user){
         List<Vehicle> vehicles =  database.getLoggedUserVehicles(user.name);
-
+        System.out.println("vehicle size in usermanager : " + vehicles.size());
         if(vehicles != null) {
            for (Vehicle v : vehicles){
                // Load vignettes
@@ -242,18 +242,20 @@ public class UserManager implements IUserAuthenticator,Serializable {
     }
 
     public List<Vehicle> getRegisteredUserVehicles() {
-        if (registeredUsers != null && loggedUser.ownedVehicles.size() <= 1){
-            // Use cached user from service
-            for (User user : registeredUsers) {
-                if (user.name.equals(loggedUser.name)) {
-                    return new ArrayList<>(user.ownedVehicles);
-                }
-            }
-        }else {
+        // Couldn't figure out why the fuck we need cached user from service, but go on the service is decoupled :)
+//        if (registeredUsers != null && loggedUser.ownedVehicles.size() <= 1){
+//            // Use cached user from service
+//            for (User user : registeredUsers) {
+//                if (user.name.equals(loggedUser.name)) {
+//                    System.out.println("getRegisteredUserVehicles value : " + user.ownedVehicles.size());
+//                    return new ArrayList<>(user.ownedVehicles);
+//                }
+//            }
+//        }else {
             return new ArrayList<>(loggedUser.ownedVehicles);
-        }
+        //}
 
-        return null;
+        //return null;
     }
 
 
