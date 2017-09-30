@@ -25,13 +25,44 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
 
 public class addVehicleController {
     private UserManager userManager = null;
     private Vehicle vehicle;
     private String extra;
     private Object receivedObject;
+
+    private static final String LICENCE_PLATE_REGEX = "[ABEKMHOPCTYX]{1,2}[0-9]{4,6}[ABEKMHOPCTYX]{1,2}";
+
+    private boolean isNumber(String text) {
+        char[] textChars = text.toCharArray();
+        for(char ch : textChars) {
+            // Skip '.' symbol if the number is a double
+            if((int) ch == 46) {
+                continue;
+            }
+
+            if((int) ch < 48 || (int) ch > 57) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private boolean isInteger(String text) {
+        return isNumber(text) && !text.contains(".");
+
+    }
+
+    private boolean isDouble(String text) {
+        if(isNumber(text) && text.contains(".")) {
+          return true;
+        }
+
+        return isInteger(text);
+
+    }
 
     public addVehicleController(){
         userManager = UserManager.getInstance();
@@ -262,8 +293,8 @@ public class addVehicleController {
 
     private Insurance setAndGetInsurance(){
         Insurance insurance = new Insurance();
-        if (insuranceTF.getText().equals("")){
-            showDialogError("Please set insurance tax !");
+        if (insuranceTF.getText().equals("") || !isDouble(insuranceTF.getText())){
+            showDialogError("Please set a valid insurance tax !");
             insuranceTF.requestFocus();
             return null;
         }
@@ -307,8 +338,8 @@ public class addVehicleController {
     @FXML
     void saveVehicle(ActionEvent event) {
         // Changed because when getText() is empty it returns empty string instead of null
-        if (regNumTF.getText().equals("")) {
-            showDialogError("Please enter vehicle's registration number !");
+        if (regNumTF.getText().equals("") || !regNumTF.getText().matches(LICENCE_PLATE_REGEX)) {
+            showDialogError("Please enter a valid vehicle registration number !");
             regNumTF.requestFocus();
             return;
         } else {
@@ -331,25 +362,51 @@ public class addVehicleController {
             vehicle.setBrand(brandTF.getText());
         }
 
-        if (yearTF.getText().equals("")) {
-            showDialogError("Please enter production year !");
+        String yearFieldText = yearTF.getText();
+        int year = -1;
+        if(isInteger(yearFieldText)) {
+            year = Integer.parseInt(yearFieldText);
+        }
+
+        if (yearFieldText.equals("") || year < 1900 || yearFieldText.length() < 3 || yearFieldText.length() > 4) {
+            showDialogError("Please enter a valid production year ! Note that the year must be grater than 1900.");
             yearTF.requestFocus();
             return;
         } else {
             vehicle.setProductionYear(Integer.parseInt(yearTF.getText()));
         }
 
-        if (oilChangeTF.getText().equals("")){
-            showDialogError("Please on what km's is next oil change !");
+        String range;
+        // Allowing a 9 digit number only. Look at the Oil change checks as well.
+        if (rangeTF.getText().equals("") || !isInteger(rangeTF.getText()) || rangeTF.getText().length() > 9) {
+            showDialogError("Please enter how many km's vehicle travelled !");
+            rangeTF.requestFocus();
+            return;
+        } else {
+            range = rangeTF.getText();
+        }
+
+        // Oil change checks
+        String oilChangeTxt = oilChangeTF.getText();
+        long iRange = Integer.parseInt(range);
+        int iOilChange = -1;
+        if(isInteger(oilChangeTxt)) {
+            iOilChange = Integer.parseInt(oilChangeTxt);
+        }
+
+        // oilChangeTxt.length() > 9  int allows a 10 digit number at most. Allowing only 9 digit numbers
+        if (oilChangeTxt.equals("") || oilChangeTxt.length() > 9 || iOilChange < iRange){
+            showDialogError("Please on what km's is next oil change ! The value can not be lower than the vehicle's range");
             oilChangeTF.requestFocus();
             return;
         }
         else {
-            vehicle.setNextOilChange(Integer.parseInt(oilChangeTF.getText()));
+            vehicle.setNextOilChange(iOilChange);
         }
 
-        if (taxTF.getText().equals("")){
-            showDialogError("Please enter vehicle's tax !");
+        // Tax amount checks
+        if (taxTF.getText().equals("") || !isDouble(taxTF.getText()) || taxTF.getText().length() > 6){
+            showDialogError("Please enter a valid vehicle tax !");
             taxTF.requestFocus();
             return;
         }
@@ -357,8 +414,9 @@ public class addVehicleController {
             vehicle.setTaxAmount(Double.parseDouble(taxTF.getText()));
         }
 
-        if (taxPayDP.getValue() == null){
-            showDialogError("Please choose tax payment date !");
+        // Tax payment day checks
+        if (taxPayDP.getValue() == null || taxPayDP.getValue().isBefore(LocalDate.now())){
+            showDialogError("Please choose a correct tax payment date !");
             taxPayDP.requestFocus();
             return;
         }
@@ -396,15 +454,6 @@ public class addVehicleController {
             return;
         } else {
            engineType = engineCombo.getValue();
-        }
-
-        String range;
-        if (rangeTF.getText().equals("")) {
-            showDialogError("Please enter how many km's vehicle travelled !");
-            rangeTF.requestFocus();
-            return;
-        } else {
-            range = rangeTF.getText();
         }
 
         // Avoiding null pointer exception
@@ -492,7 +541,7 @@ public class addVehicleController {
     private void showDialogError(String text){
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Data error");
-        alert.setHeaderText("No data provided");
+        alert.setHeaderText("Incorrect data provided");
         alert.setContentText(text);
         alert.show();
     }
