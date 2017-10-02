@@ -600,11 +600,8 @@ public class Database {
             }
 
             preparedStatement.setString(3,insurance.getStartDate());
-            // Ignore end date because it is calculated inside insurance
-            preparedStatement.setString(4,"2017-1-1");
+            preparedStatement.setString(4,insurance.getTotalEndDate());
             preparedStatement.setDouble(5,insurance.getPrice());
-
-            // TODO : check bug when editing not creating ... parameter 2 no value specified ...
 
             preparedStatement.executeUpdate();
 
