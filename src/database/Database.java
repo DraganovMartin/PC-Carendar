@@ -371,7 +371,7 @@ public class Database {
                     String startingDate = resultSet.getString(3);
                     String[] dates = startingDate.split("-");
                     Calendar startDate = Calendar.getInstance();
-                    startDate.set(Integer.parseInt(dates[0]),Integer.parseInt(dates[1]),Integer.parseInt(dates[2]));
+                    startDate.set(Integer.parseInt(dates[0]),Integer.parseInt(dates[1]) - 1,Integer.parseInt(dates[2]));
                     endDate.setTime(startDate.getTime());
                     insurance.setStartDate(endDate.get(Calendar.YEAR), endDate.get(Calendar.MONTH), endDate.get(Calendar.DAY_OF_MONTH));
                 }
