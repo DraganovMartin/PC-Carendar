@@ -333,12 +333,13 @@ public class Database {
     public Insurance getInsuranceForVehicle(String registration){
 
             try {
-                String getInsuranceDataSql = "select type, price, dateFrom From taxes Where vehicle_registration = ? And type Like '%insurance' And dateFrom = (SELECT max(dateFrom) FROM taxes where type Like '%insurance');";
+                String getInsuranceDataSql = "select type, price, dateFrom From taxes Where vehicle_registration = ? And type Like '%insurance' And dateFrom = (SELECT max(dateFrom) FROM taxes where type Like '%insurance' and vehicle_registration = ?);";
                 preparedStatement = connect.prepareStatement(getInsuranceDataSql);
 
 
                 // Get all other insurance data
                 preparedStatement.setString(1, registration);
+                preparedStatement.setString(2,registration);
                 resultSet = preparedStatement.executeQuery();
 
 //            if(!resultSet.next()) {

@@ -32,7 +32,7 @@ public class addVehicleController {
     private String extra;
     private Object receivedObject;
 
-    private static final String LICENCE_PLATE_REGEX = "[ABEKMHOPCTYX]{1,2}[0-9]{4,6}[ABEKMHOPCTYX]{1,2}";
+    private static final String LICENCE_PLATE_REGEX = "[ABEKMHOPCTYXABCDEFGHIJKLMNOPQRSTUVWXYZ]{1,2}[0-9]{4,6}[ABEKMHOPCTYXABCDEFGHIJKLMNOPQRSTUVWXYZ]{1,2}";
 
     private boolean isNumber(String text) {
         char[] textChars = text.toCharArray();
@@ -349,13 +349,13 @@ public class addVehicleController {
     @FXML
     void saveVehicle(ActionEvent event) {
         // Changed because when getText() is empty it returns empty string instead of null
-        if (regNumTF.getText().equals("") || !regNumTF.getText().matches(LICENCE_PLATE_REGEX)) {
-            showDialogError("Please enter a valid vehicle registration number !");
-            regNumTF.requestFocus();
-            return;
-        } else {
+//        if (regNumTF.getText().equals("") || !regNumTF.getText().matches(LICENCE_PLATE_REGEX)) {
+//            showDialogError("Please enter a valid vehicle registration number !");
+//            regNumTF.requestFocus();
+//            return;
+//        } else {
             vehicle.setRegistrationPlate(regNumTF.getText());
-        }
+//        }
 
         if (modelTF.getText().equals("")) {
             showDialogError("Please enter car model !");
@@ -406,14 +406,14 @@ public class addVehicleController {
         }
 
         // oilChangeTxt.length() > 9  int allows a 10 digit number at most. Allowing only 9 digit numbers
-        if (oilChangeTxt.equals("") || oilChangeTxt.length() > 9 || iOilChange < iRange){
-            showDialogError("Please on what km's is next oil change ! The value can not be lower than the vehicle's range");
-            oilChangeTF.requestFocus();
-            return;
-        }
-        else {
+//        if (oilChangeTxt.equals("") || oilChangeTxt.length() > 9 || iOilChange < iRange){
+//            showDialogError("Please on what km's is next oil change ! The value can not be lower than the vehicle's range");
+//            oilChangeTF.requestFocus();
+//            return;
+//        }
+//        else {
             vehicle.setNextOilChange(iOilChange);
-        }
+//        }
 
         // Tax amount checks
         if (taxTF.getText().equals("") || !isDouble(taxTF.getText()) || taxTF.getText().length() > 6){
