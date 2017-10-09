@@ -111,7 +111,7 @@ public class addVehicleController {
                 rangeTF.setText(received.getKmRange());
 
                 Insurance insurance = received.getInsurance();
-                if(insurance.isValid()) {
+                if(insurance != null && insurance.isValid()) {
                     insuranceTF.setText(String.valueOf(insurance.getPrice()));
                     switch (insurance.getTypeCount()) {
                         case 1:
