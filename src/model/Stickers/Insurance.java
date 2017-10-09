@@ -163,5 +163,5 @@ public class Insurance implements Serializable{
      * Gets the final end date of the insurance.
      * @return final end date formatted as string " yyyy-MM-dd "
      */
-    public String getTotalEndDate() {return  new SimpleDateFormat("yyyy-MM-dd").format(endDates[endDates.length-1].getTime());}
+    public String getTotalEndDate() {return new SimpleDateFormat("yyyy-MM-dd").format(endDates[type - 1].getTime());}
 }
