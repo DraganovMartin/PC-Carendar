@@ -143,18 +143,18 @@ public class addVehicleController {
                                     break;
                                 case 2:
                                     tempDate = (Calendar) date.clone();
-                                    tempDate.set(Calendar.MONTH,tempDate.get(Calendar.MONTH)-6);
-                                    insDateStartDP.setValue(LocalDate.of(tempDate.get(Calendar.YEAR), tempDate.get(Calendar.MONTH) + 1, tempDate.get(Calendar.DAY_OF_MONTH)));
+                                    tempDate.set(Calendar.MONTH,tempDate.get(Calendar.MONTH)-5);
+                                    insDateStartDP.setValue(LocalDate.of(tempDate.get(Calendar.YEAR), tempDate.get(Calendar.MONTH), tempDate.get(Calendar.DAY_OF_MONTH)));
                                     break;
                                 case 3:
                                     tempDate = (Calendar) date.clone();
-                                    tempDate.set(Calendar.MONTH,tempDate.get(Calendar.MONTH)-4);
-                                    insDateStartDP.setValue(LocalDate.of(tempDate.get(Calendar.YEAR), tempDate.get(Calendar.MONTH) + 1, tempDate.get(Calendar.DAY_OF_MONTH)));
+                                    tempDate.set(Calendar.MONTH,tempDate.get(Calendar.MONTH)-3);
+                                    insDateStartDP.setValue(LocalDate.of(tempDate.get(Calendar.YEAR), tempDate.get(Calendar.MONTH), tempDate.get(Calendar.DAY_OF_MONTH)));
                                     break;
                                 case 4:
                                     tempDate = (Calendar) date.clone();
-                                    tempDate.set(Calendar.MONTH,tempDate.get(Calendar.MONTH)-3);
-                                    insDateStartDP.setValue(LocalDate.of(tempDate.get(Calendar.YEAR), tempDate.get(Calendar.MONTH) + 1, tempDate.get(Calendar.DAY_OF_MONTH)));
+                                    tempDate.set(Calendar.MONTH,tempDate.get(Calendar.MONTH)-2);
+                                    insDateStartDP.setValue(LocalDate.of(tempDate.get(Calendar.YEAR), tempDate.get(Calendar.MONTH), tempDate.get(Calendar.DAY_OF_MONTH)));
                                     break;
                             }
                             break;
@@ -192,18 +192,28 @@ public class addVehicleController {
                     Calendar check = Calendar.getInstance();
                     for (Calendar date : insuranceDates) {
                         if (date.compareTo(check) == 0 || date.compareTo(check) > 0) {
+                            Calendar tempDate = Calendar.getInstance(); // for setting date first here, because if month is lower than subtracted number crashes ...
+                            tempDate.clear();
                             switch (insurance.getTypeCount()) {
                                 case 1:
-                                    insDateStartDP.setValue(LocalDate.of(date.get(Calendar.YEAR) - 1, date.get(Calendar.MONTH) + 1, date.get(Calendar.DAY_OF_MONTH)));
+                                    tempDate = (Calendar) date.clone();
+                                    tempDate.set(Calendar.YEAR,tempDate.get(Calendar.YEAR)-1);
+                                    insDateStartDP.setValue(LocalDate.of(tempDate.get(Calendar.YEAR), tempDate.get(Calendar.MONTH) + 1, tempDate.get(Calendar.DAY_OF_MONTH)));
                                     break;
                                 case 2:
-                                    insDateStartDP.setValue(LocalDate.of(date.get(Calendar.YEAR), date.get(Calendar.MONTH) - 5, date.get(Calendar.DAY_OF_MONTH)));
+                                    tempDate = (Calendar) date.clone();
+                                    tempDate.set(Calendar.MONTH,tempDate.get(Calendar.MONTH)-5);
+                                    insDateStartDP.setValue(LocalDate.of(tempDate.get(Calendar.YEAR), tempDate.get(Calendar.MONTH), tempDate.get(Calendar.DAY_OF_MONTH)));
                                     break;
                                 case 3:
-                                    insDateStartDP.setValue(LocalDate.of(date.get(Calendar.YEAR), date.get(Calendar.MONTH) - 3, date.get(Calendar.DAY_OF_MONTH)));
+                                    tempDate = (Calendar) date.clone();
+                                    tempDate.set(Calendar.MONTH,tempDate.get(Calendar.MONTH)-3);
+                                    insDateStartDP.setValue(LocalDate.of(tempDate.get(Calendar.YEAR), tempDate.get(Calendar.MONTH), tempDate.get(Calendar.DAY_OF_MONTH)));
                                     break;
                                 case 4:
-                                    insDateStartDP.setValue(LocalDate.of(date.get(Calendar.YEAR), date.get(Calendar.MONTH) - 2, date.get(Calendar.DAY_OF_MONTH)));
+                                    tempDate = (Calendar) date.clone();
+                                    tempDate.set(Calendar.MONTH,tempDate.get(Calendar.MONTH)-2);
+                                    insDateStartDP.setValue(LocalDate.of(tempDate.get(Calendar.YEAR), tempDate.get(Calendar.MONTH), tempDate.get(Calendar.DAY_OF_MONTH)));
                                     break;
                             }
                             break;

@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.UserManager;
 import model.Vehicle.Car;
@@ -15,6 +16,7 @@ import views.listView.VehicleCellAdapter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -75,19 +77,26 @@ public class garageController {
                 });
                 MenuItem deleteItem = new MenuItem("Delete");
                 deleteItem.setOnAction(e -> {
-                    int selectedIndex = vehicleListView.getSelectionModel().getSelectedIndex();
+                    // -------------------- Delete confirmation alert ----------------------
+                    Alert deleteAlert = new Alert(Alert.AlertType.CONFIRMATION,"Are you sure you want to delete this vehicle !",
+                            ButtonType.YES,ButtonType.CANCEL);
+                    deleteAlert.showAndWait();
+                    if(deleteAlert.getResult() == ButtonType.YES){
+                        int selectedIndex = vehicleListView.getSelectionModel().getSelectedIndex();
 
-                    Vehicle v = vehicleListView.getItems().get(selectedIndex);
-                    try {
-                        userManager.removeVehicle(v,false);
-                        vehicleListView.getItems().remove(selectedIndex);
+                        Vehicle v = vehicleListView.getItems().get(selectedIndex);
+                        try {
+                            userManager.removeVehicle(v,false);
+                            vehicleListView.getItems().remove(selectedIndex);
 
-                        showInfoDialog("Vehicle deletion","Vehicle deleted successfully!");
+                            showInfoDialog("Vehicle deletion","Vehicle deleted successfully!");
 
-                    } catch (Exception err) {
-                        err.printStackTrace();
-                        Logger.getGlobal().log(Level.SEVERE, "Error deleting vehicle! \nStack trace:\n" + err.getMessage());
+                        } catch (Exception err) {
+                            err.printStackTrace();
+                            Logger.getGlobal().log(Level.SEVERE, "Error deleting vehicle! \nStack trace:\n" + err.getMessage());
+                        }
                     }
+                    // -------------------- End of delete confirmation alert ----------------------
 
                 });
 
